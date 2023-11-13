@@ -1,7 +1,9 @@
 ﻿  main.cpp
-D:\fax\aadspproj\aadspProj\model0\main.cpp(211,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-D:\fax\aadspproj\aadspProj\model0\main.cpp(149,2): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\fax\aadspproj\aadspProj\model0\main.cpp(151,2): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\fax\aadspproj\aadspProj\model0\main.cpp(64,16): warning C4018: '<': signed/unsigned mismatch
+D:\fax\aadspproj\aadspProj\model0\main.cpp(124,1): error C2059: syntax error: '}'
+D:\fax\aadspproj\aadspProj\model0\main.cpp(124,1): error C2143: syntax error: missing ';' before '}'
+D:\fax\aadspproj\aadspProj\model0\main.cpp(142,1): error C2143: syntax error: missing ';' before '{'
+D:\fax\aadspproj\aadspProj\model0\main.cpp(142,1): error C2447: '{': missing function header (old-style formal list?)
   WAVheader.cpp
 D:\fax\aadspproj\aadspProj\model0\WAVheader.cpp(84,15): error C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   Generating Code...

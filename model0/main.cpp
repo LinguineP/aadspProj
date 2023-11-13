@@ -9,47 +9,64 @@
 
 // Number of channels
 #define INPUT_NUM_CHANNELS 2
-#define OUTPUT_NUM_CHANNELS 3
+#define OUTPUT_NUM_CHANNELS 5
 
 // Channel IDs. 
 // Should input and output channel IDs be separated?
-#define LEFT_CH 0
-#define RIGHT_CH 1
-#define CENTER_CH 2
+#define L_CH 0
+#define R_CH 1
+#define LS_CH 2
+#define RS_CH 3
+#define C_CH 4
 
-// Gain linear values. 
+// default Input gain values. 
+#define MINUS_3DB 0.501187
 
-#define PLUS_6DB 1.99526
-#define MINUS_12DB 0.251189
-/*
-#define MINUS_2DB 0.794328
-#define MINUS_4DB 0.630957
-*/
 
 // User commands
-static double gain1;
-static double gain2;
-static bool enable;
-static bool mute;
-static int num_out_channels;
+static double gainL;
+static double gainR;
+static bool enableFlag;
+static bool modeFlag;
+
 
 // IO Buffers
 static double sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
 
 // Processing related variables
-static double preGain;
+static double inputGain;
 static double postGain;
 static double variablesGain[INPUT_NUM_CHANNELS];
 static double limiterThreshold = 0.999;
 
-void initGainProcessing(double preGainValue, double* defaultVariablesGain, double postGainValue)
+void initGainProcessing(double inputGainValue)
 {
-	preGain = preGainValue;
-	for (int i = 0; i < INPUT_NUM_CHANNELS; i++)
+	inputGain = inputGainValue;
+	
+}
+
+double fir_basic(double input, double* coeffs, double* history, unsigned int n_coeff)
+{
+	int i;
+	double ret_val = 0;
+
+	/* shift delay line */
+	for (i = n_coeff - 2; i >= 0; i--)
 	{
-		variablesGain[i] = defaultVariablesGain[i];
+		history[i + 1] = history[i];
 	}
-	postGain = postGainValue;
+
+	/* store input at the beginning of the delay line */
+	history[0] = input;
+
+
+	/* calc FIR */
+	for (i = 0; i < n_coeff; i++)
+	{
+		ret_val += coeffs[i] * history[i];
+	}
+
+	return ret_val;
 }
 
 double saturation(double in, double threshold)
@@ -67,46 +84,44 @@ double saturation(double in, double threshold)
 	return in;
 }
 
-void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], const double LchGain, const double RchGain, double* variableGains, const double CchGain, int noInputChannels, int nSamples)
+void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], const double LchGain, const double RchGain, double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs,int nSamples)
 {
-
-	if (num_out_channels == 2) {
-		for (int j = 0; j < nSamples; j++)
-		{
-			// first stage, apply constant pre-Gain
-			pIn[LEFT_CH][j] = pIn[LEFT_CH][j] * LchGain;
-			pIn[RIGHT_CH][j] = pIn[RIGHT_CH][j] * RchGain;
-
-			// second stage, apply variable gain
-			pOut[LEFT_CH][j] = (mute == 0) ? saturation(pIn[LEFT_CH][j] * variableGains[LEFT_CH], limiterThreshold) : 0;
-			pOut[RIGHT_CH][j] = (mute == 0) ? saturation(pIn[RIGHT_CH][j] * variableGains[RIGHT_CH], limiterThreshold) : 0;
+	for (int j = 0; j < nSamples; j++)
+	{
+		// first stage, apply inputGain on L & R channels 
+		pIn[L_CH][j] = saturation(pIn[L_CH][j] * LchGain,limiterThreshold);
+		pIn[R_CH][j] = saturation(pIn[R_CH][j] * RchGain, limiterThreshold);
+		//passing through processed L & R channels To Ls and Rs channels
+		pOut[LS_CH][j] = pIn[L_CH][j];
+		pOut[RS_CH][j] = pIn[R_CH][j];
+		// 
+		if (modeFlag) 
+		{ //fir_basic(double input, double* coeffs, double* history, unsigned int n_coeff)
+			pOut[L_CH][j] = fir_basic(pIn[L_CH][j],hpfCoeffs,hpfHistoryBuff,n_coeffs);
+			pOut[R_CH][j] = fir_basic(pIn[R_CH][j],lpfCoeffs,lpfHistoryBuff,n_coeffs);
+		
 		}
-	}
-	else if (num_out_channels == 3) {
-		for (int j = 0; j < nSamples; j++)
+		else
 		{
-			// first stage, apply constant pre-Gain
-			pIn[LEFT_CH][j] = pIn[LEFT_CH][j] * LchGain;
-			pIn[RIGHT_CH][j] = pIn[RIGHT_CH][j] * RchGain;
+			pOut[L_CH][j] = pIn[L_CH][j];
+			pOut[R_CH][j] = pIn[R_CH][j];
 
-			// second stage, apply variable gain
-			pOut[LEFT_CH][j] = (mute == 0) ? saturation(pIn[LEFT_CH][j] * variableGains[LEFT_CH], limiterThreshold) : 0;
-			pOut[RIGHT_CH][j] = (mute == 0) ? saturation(pIn[RIGHT_CH][j] * variableGains[RIGHT_CH], limiterThreshold) : 0;
-
-			// add processed sampled to the center output channel
-			pOut[CENTER_CH][j] = (mute == 0) ? pOut[LEFT_CH][j] + pOut[RIGHT_CH][j] : 0;
-
-			// apply center channel post-Gain
-			pOut[CENTER_CH][j] = (mute == 0) ? pOut[CENTER_CH][j] * CchGain : 0;
 		}
+
+		// generate C_CH as a sum of L & R output channels
+		pOut[C_CH][j] = pOut[L_CH][j] + pOut[R_CH][j];
+
+		
 	}
+
+}
 
 	
 
 	// TODO: remove upper implementation and implement processing for each channel indepenetnly 
 	// (without outter noInputChannels loop, but only with inner nSamples loop)
 	// (kick-out any unnecessary local variables and parameters)
-}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // @Author	<student name>
@@ -133,12 +148,13 @@ int main(int argc, char* argv[])
 
 
 	// Load arguments
-	enable = atoi(argv[3]);
+	/*enable = atoi(argv[3]);
 	mute = atoi(argv[4]);
 	gain1 = atof(argv[5]);
 	gain2 = atof(argv[6]);
 	num_out_channels = atoi(argv[7]);
-	double defaultVariablesGain[INPUT_NUM_CHANNELS] = { gain1 , gain2 };
+	*/
+	double defaultVariablesGain[INPUT_NUM_CHANNELS] = { gainL , gainR };
 
 	// Init channel buffers
 	for (int i = 0; i < MAX_NUM_CHANNEL; i++)
@@ -146,9 +162,9 @@ int main(int argc, char* argv[])
 
 	// Open input and output wav files
 	//-------------------------------------------------
-	strcpy(WavInputName, argv[1]);
+	//strcpy(WavInputName, argv[1]);
 	wav_in = OpenWavFileForRead(WavInputName, (char *) "rb");
-	strcpy(WavOutputName, argv[2]);
+	//strcpy(WavOutputName, argv[2]);
 	wav_out = OpenWavFileForRead(WavOutputName, (char*) "wb");
 	//-------------------------------------------------
 
@@ -160,7 +176,7 @@ int main(int argc, char* argv[])
 	// Set up output WAV header
 	//-------------------------------------------------	
 	outputWAVhdr = inputWAVhdr;
-	outputWAVhdr.fmt.NumChannels = num_out_channels; // change number of channels
+	outputWAVhdr.fmt.NumChannels = OUTPUT_NUM_CHANNELS; // change number of channels
 
 	int oneChannelSubChunk2Size = inputWAVhdr.data.SubChunk2Size / inputWAVhdr.fmt.NumChannels;
 	int oneChannelByteRate = inputWAVhdr.fmt.ByteRate / inputWAVhdr.fmt.NumChannels;
@@ -175,7 +191,7 @@ int main(int argc, char* argv[])
 	//-------------------------------------------------
 	WriteWavHeader(wav_out, outputWAVhdr);
 
-	initGainProcessing(PLUS_6DB, defaultVariablesGain, MINUS_12DB);
+	initGainProcessing(MINUS_3DB);
 
 	// Processing loop
 	//-------------------------------------------------	
@@ -199,10 +215,10 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			if(enable)
-			{
+			//if(enable)
+			//{
 				gainProcessing(sampleBuffer, sampleBuffer, preGain, preGain, variablesGain, postGain, INPUT_NUM_CHANNELS, BLOCK_SIZE);
-			}
+			//}
 
 			for (int j = 0; j < BLOCK_SIZE; j++)
 			{
