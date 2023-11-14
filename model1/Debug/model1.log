@@ -1,0 +1,3 @@
+﻿  main.cpp
+D:\fax\aadspproj\aadspProj\model1\main.cpp(272,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  model1.vcxproj -> D:\fax\aadspproj\aadspProj\model1\Debug\model1.exe

@@ -1,0 +1,8 @@
+﻿  main.cpp
+D:\fax\aadspproj\aadspProj\model1\main.cpp(69,16): warning C4018: '<': signed/unsigned mismatch
+D:\fax\aadspproj\aadspProj\model1\main.cpp(236,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\fax\aadspproj\aadspProj\model1\main.cpp(172,2): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\fax\aadspproj\aadspProj\model1\main.cpp(174,2): error C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  WAVheader.cpp
+D:\fax\aadspproj\aadspProj\model1\WAVheader.cpp(84,15): error C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...

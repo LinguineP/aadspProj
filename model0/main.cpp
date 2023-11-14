@@ -103,35 +103,30 @@ void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double*
 		// 
 		if (modeFlag) 
 		{ //doing fir filtering on L&R channels
-			pOut[LS_CH][j] = fir_basic(pIn[L_CH][j],hpfCoeffs,hpfHistoryBuff,n_coeffs);
-			pOut[RS_CH][j] = fir_basic(pIn[R_CH][j],lpfCoeffs,lpfHistoryBuff,n_coeffs);
+			pOut[L_CH][j] = fir_basic(pIn[L_CH][j],hpfCoeffs,hpfHistoryBuff,n_coeffs);
+			pOut[R_CH][j] = fir_basic(pIn[R_CH][j],lpfCoeffs,lpfHistoryBuff,n_coeffs);
 		
 		}
 		else
 		{
-			pOut[LS_CH][j] = pIn[L_CH][j];
-			pOut[RS_CH][j] = pIn[R_CH][j];
+			pOut[L_CH][j] = pIn[L_CH][j];
+			pOut[R_CH][j] = pIn[R_CH][j];
 
 		}
 
 		// generate C_CH as a sum of L & R output channels
-		pOut[C_CH][j] = pOut[LS_CH][j] + pOut[RS_CH][j];
+		pOut[C_CH][j] = pOut[L_CH][j] + pOut[R_CH][j];
 
 		
 	}
 
 }
 
-	
-
-	// TODO: remove upper implementation and implement processing for each channel indepenetnly 
-	// (without outter noInputChannels loop, but only with inner nSamples loop)
-	// (kick-out any unnecessary local variables and parameters)
-
 
 /////////////////////////////////////////////////////////////////////////////////
-// @Author	<student name>
-// @Date		<date>  
+/// MODEL0
+/////////////////////////////////////////////////////////////////////////////////
+// @Author	<Pavle Vasiljevic RA207/2020>
 //
 // Function:
 // main
@@ -145,7 +140,7 @@ void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double*
 // @return - nothing
 // Comment: main routine of a program
 //
-// E-mail:	<email>
+// 
 //
 /////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
