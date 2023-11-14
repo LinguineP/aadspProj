@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "WAVheader.h"
+#include "FIRcoefs.h"
 
 #define BLOCK_SIZE 16
 #define MAX_NUM_CHANNEL 8
@@ -20,7 +21,7 @@
 #define C_CH 4
 
 // default Input gain values. 
-#define MINUS_3DB 0.501187
+#define MINUS_3DB 0.7071
 
 
 // User commands
@@ -28,6 +29,8 @@ static double gainL;
 static double gainR;
 static bool enableFlag;
 static bool modeFlag;
+
+
 
 
 // IO Buffers
@@ -39,10 +42,12 @@ static double postGain;
 static double variablesGain[INPUT_NUM_CHANNELS];
 static double limiterThreshold = 0.999;
 
-void initGainProcessing(double inputGainValue)
+void initGainProcessing(double* defaultVariablesGain)
 {
-	inputGain = inputGainValue;
-	
+	for (int i = 0; i < INPUT_NUM_CHANNELS; i++)
+	{
+		variablesGain[i] = defaultVariablesGain[i];
+	}
 }
 
 double fir_basic(double input, double* coeffs, double* history, unsigned int n_coeff)
@@ -84,32 +89,33 @@ double saturation(double in, double threshold)
 	return in;
 }
 
-void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], const double LchGain, const double RchGain, double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs,int nSamples)
+void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double* variableGains,
+					double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs,int nSamples)
 {
 	for (int j = 0; j < nSamples; j++)
 	{
 		// first stage, apply inputGain on L & R channels 
-		pIn[L_CH][j] = saturation(pIn[L_CH][j] * LchGain,limiterThreshold);
-		pIn[R_CH][j] = saturation(pIn[R_CH][j] * RchGain, limiterThreshold);
+		pIn[L_CH][j] = saturation(pIn[L_CH][j] * variableGains[L_CH], limiterThreshold);
+		pIn[R_CH][j] = saturation(pIn[R_CH][j] * variableGains[R_CH], limiterThreshold);
 		//passing through processed L & R channels To Ls and Rs channels
 		pOut[LS_CH][j] = pIn[L_CH][j];
 		pOut[RS_CH][j] = pIn[R_CH][j];
 		// 
 		if (modeFlag) 
-		{ //fir_basic(double input, double* coeffs, double* history, unsigned int n_coeff)
-			pOut[L_CH][j] = fir_basic(pIn[L_CH][j],hpfCoeffs,hpfHistoryBuff,n_coeffs);
-			pOut[R_CH][j] = fir_basic(pIn[R_CH][j],lpfCoeffs,lpfHistoryBuff,n_coeffs);
+		{ //doing fir filtering on L&R channels
+			pOut[LS_CH][j] = fir_basic(pIn[L_CH][j],hpfCoeffs,hpfHistoryBuff,n_coeffs);
+			pOut[RS_CH][j] = fir_basic(pIn[R_CH][j],lpfCoeffs,lpfHistoryBuff,n_coeffs);
 		
 		}
 		else
 		{
-			pOut[L_CH][j] = pIn[L_CH][j];
-			pOut[R_CH][j] = pIn[R_CH][j];
+			pOut[LS_CH][j] = pIn[L_CH][j];
+			pOut[RS_CH][j] = pIn[R_CH][j];
 
 		}
 
 		// generate C_CH as a sum of L & R output channels
-		pOut[C_CH][j] = pOut[L_CH][j] + pOut[R_CH][j];
+		pOut[C_CH][j] = pOut[LS_CH][j] + pOut[RS_CH][j];
 
 		
 	}
@@ -130,8 +136,12 @@ void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], const d
 // Function:
 // main
 //
-// @param - argv[0] - Input file name
-//        - argv[1] - Output file name
+// @param  - argv[1] - Input file name
+//        - argv[2] - Output file name
+//		  - argv[3] - enable on off (0 or 1) default on
+//		  - argv[4] - g1 gain for the left channel default -3db (value [0,2])
+//		  - argv[5] - g2 gain () default -3db (value [0,2])
+//		  - argv[6] - mode (0 or 1) default 0
 // @return - nothing
 // Comment: main routine of a program
 //
@@ -145,26 +155,23 @@ int main(int argc, char* argv[])
 	char WavInputName[256];
 	char WavOutputName[256];
 	WAV_HEADER inputWAVhdr, outputWAVhdr;
+	double defaultVariablesGain[INPUT_NUM_CHANNELS] = { MINUS_3DB , MINUS_3DB }; // -3dB, -3dB
+	defaultVariablesGain[0] = atof(argv[4]); //sets variable gain L
+	defaultVariablesGain[1] = atof(argv[5]); //sets variable gain R
 
 
-	// Load arguments
-	/*enable = atoi(argv[3]);
-	mute = atoi(argv[4]);
-	gain1 = atof(argv[5]);
-	gain2 = atof(argv[6]);
-	num_out_channels = atoi(argv[7]);
-	*/
-	double defaultVariablesGain[INPUT_NUM_CHANNELS] = { gainL , gainR };
-
+	enableFlag = atoi(argv[3]); //sets the enable flag
+	modeFlag = atoi(argv[6]);	//sets the mode
 	// Init channel buffers
 	for (int i = 0; i < MAX_NUM_CHANNEL; i++)
 		memset(&sampleBuffer[i], 0, BLOCK_SIZE);
 
+
 	// Open input and output wav files
 	//-------------------------------------------------
-	//strcpy(WavInputName, argv[1]);
+	strcpy(WavInputName, argv[1]);
 	wav_in = OpenWavFileForRead(WavInputName, (char *) "rb");
-	//strcpy(WavOutputName, argv[2]);
+	strcpy(WavOutputName, argv[2]);
 	wav_out = OpenWavFileForRead(WavOutputName, (char*) "wb");
 	//-------------------------------------------------
 
@@ -191,7 +198,7 @@ int main(int argc, char* argv[])
 	//-------------------------------------------------
 	WriteWavHeader(wav_out, outputWAVhdr);
 
-	initGainProcessing(MINUS_3DB);
+	initGainProcessing(defaultVariablesGain);
 
 	// Processing loop
 	//-------------------------------------------------	
@@ -215,10 +222,12 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			//if(enable)
-			//{
-				gainProcessing(sampleBuffer, sampleBuffer, preGain, preGain, variablesGain, postGain, INPUT_NUM_CHANNELS, BLOCK_SIZE);
-			//}
+			//gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double* variableGains,
+			//double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs, int nSamples)
+			if(enableFlag)
+			{
+				gainProcessing(sampleBuffer, sampleBuffer, variablesGain, hpfCoefs,lpfCoefs,hpfHistoryBuffer,lpfHistoryBuffer,FILTER_LENGHT,BLOCK_SIZE);
+			}
 
 			for (int j = 0; j < BLOCK_SIZE; j++)
 			{

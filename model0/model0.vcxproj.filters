@@ -26,5 +26,8 @@
     <ClInclude Include="WAVheader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FIRcoefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

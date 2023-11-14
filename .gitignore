@@ -1,0 +1,6 @@
+#ignore testing in outs
+/outputStreams/
+/testing/test_outputs
+/testing/TestStreams
+/testing/Tools
+

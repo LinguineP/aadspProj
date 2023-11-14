@@ -1,0 +1,4 @@
+﻿  main.cpp
+D:\fax\aadspproj\aadspProj\model0\main.cpp(69,16): warning C4018: '<': signed/unsigned mismatch
+D:\fax\aadspproj\aadspProj\model0\main.cpp(236,34): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  model0.vcxproj -> D:\fax\aadspproj\aadspProj\model0\Debug\model0.exe
