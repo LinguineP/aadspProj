@@ -24,6 +24,15 @@
 #define MINUS_3DB 0.7071
 
 
+// number of args
+#define FULL_ARGS_PASSED 7
+
+
+// DEFAULT VALUES
+#define DEFAULTENABLE 1
+#define DEFAULTMODE 0
+
+
 // User commands
 static bool enableFlag;
 static bool modeFlag;
@@ -190,12 +199,19 @@ int main(int argc, char* argv[])
 	char WavOutputName[256];
 	WAV_HEADER inputWAVhdr, outputWAVhdr;
 	double defaultVariablesGain[INPUT_NUM_CHANNELS] = { MINUS_3DB , MINUS_3DB }; // -3dB, -3dB
-	defaultVariablesGain[0] = atof(argv[4]); //sets variable gain L
-	defaultVariablesGain[1] = atof(argv[5]); //sets variable gain R
+	enableFlag = DEFAULTENABLE;
+	modeFlag = DEFAULTMODE;
 
 
-	enableFlag = atoi(argv[3]); //sets the enable flag
-	modeFlag = atoi(argv[6]);	//sets the mode
+
+	//if all arguments passed else default 
+	if (argc == FULL_ARGS_PASSED) {
+		defaultVariablesGain[0] = atof(argv[4]); //sets variable gain L
+		defaultVariablesGain[1] = atof(argv[5]); //sets variable gain R
+
+		enableFlag = atoi(argv[3]); //sets the enable flag
+		modeFlag = atoi(argv[6]);	//sets the mode
+	}
 	// Init channel buffers
 	for (int i = 0; i < MAX_NUM_CHANNEL; i++)
 		memset(&sampleBuffer[i], 0, BLOCK_SIZE);

@@ -6,14 +6,14 @@ import shutil
 # input_streams_root == "/path/to/script/Teststreams"
 input_streams_root = os.path.join(os.path.dirname(__file__), "TestStreams")
 # base name of project
-target = "gainProc"
+target = "model"
 # executables_root = "/path/to/script/Debug"
 executables_root = os.path.join(os.path.dirname(__file__), "bin")
 # compare_tool = "/path/to/script/Tools/PCMCompare.exe"
 compare_tool = os.path.join(os.path.dirname(__file__), "Tools", "PCMCompare.exe")
 
 # name of models for testing == ["model0", "model1", "model2"]
-models = [f'm{x}' for x in range(3)]
+models = [f'{x}' for x in range(3)]
 # *************************************************************************
 # This tool expects the executables provited to be of the following format:
 #   executables = [ f'{target}_{m}' for m in models ]
@@ -30,27 +30,25 @@ def get_inputs():
     #         if file.endswith(".wav"):
     #             inputs.append(os.path.join(root, file))
 
-    # inputs == ["/path/to/input_streams/funky_sample.wav", "/path/to/input_streams/WhiteNoise.wav"]
-    inputs = [os.path.join(input_streams_root, x) for x in ['funky_sample.wav', 'WhiteNoise.wav']]
+    # inputs == ["/path/to/input_streams/Freq_sweep.wav", "/path/to/input_streams/WhiteNoise.wav"]
+    inputs = [os.path.join(input_streams_root, x) for x in ['Freq_sweep.wav', 'WhiteNoise.wav']]
     
     return inputs
 #
-#@param - argv[1] - Input file name
+# @param - argv[1] - Input file name
 #        - argv[2] - Output file name
 #		  - argv[3] - enable on off (0 or 1) default on
-#		  - argv[4] - g1 gain () default -4db (value [0,2])
-#		  - argv[5] - g2 gain () default -2db (value [0,2])
-#		  - argv[6] - mute 0 or 1
-#		  - argv[7] - number of chanels 3_0_0 ili 2_0_0     
+#         - argv[4] - g1 gain for the left channel default -3db (value [0,2])
+#		  - argv[5] - g2 gain () default -3db (value [0,2])
+#		  - argv[6] - mode (0 or 1) default 0 
 # returns list of lists of desired params
 def get_params():
     
     params = [
         [0, 1],					# enable
-        ["0.999", "-0.999"],	# gain 
-        ["0.999", "-0.999"],	# gain 
-        [0, 1],  				# mute
-        ["3_0_0", "2_0_0"]				# output mode
+        ["0.999", "-0.999","0.7071"],	# gain 
+        ["0.999", "-0.999","0.7071"],	# gain 
+        [0, 1],  				# mode
     ]
 
     return params
@@ -77,7 +75,7 @@ def get_cases():
 
 
 def run_compare(in_file, out_file, log_file):
-    cmd = f'"{compare_tool}" -b16 "{in_file}" "{out_file}"'
+    cmd = f'"{compare_tool}"  "{in_file}" "{out_file}"'
     print(cmd)
     log_file.write(cmd + "\n")
 
@@ -120,7 +118,7 @@ def run_test(case):
 
     out_files = []
     for m in models:
-        exe = os.path.join(executables_root, f'{target}_{m}.exe')
+        exe = os.path.join(executables_root, f'{target}{m}.exe')
         out_file = os.path.join(test_dir, f'out_{test_name}_{m}.wav')
         out_files.append(out_file)
         execute_test(exe, case[0], out_file, case[1])
@@ -157,12 +155,12 @@ if __name__ == "__main__":
 
     cases = get_cases()
 
-    # print(cases)
+    #print(cases)
 
     run_tests(cases)
 
 
     #extracts all  logs int a new dir
-    destination_directory = os.path.join(os.path.dirname(__file__), "extracted logs")
+    destination_directory = os.path.join(os.path.dirname(__file__), "extracted_logs")
 
     extract_logs(test_outputs, destination_directory)
