@@ -22,7 +22,7 @@ def append_txt_files(folder_path, output_file):
             output.write('\n\n')
 
 
-input_path = 'extracted_logs'
+input_path = 'D:/fax/aadspproj/aadspProj/testing/extracted_logs'
 
 # output file 
 output_file = 'allLogs.txt'

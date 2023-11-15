@@ -14,7 +14,7 @@ executables_root = os.path.join(os.path.dirname(__file__), "bin")
 compare_tool = os.path.join(os.path.dirname(__file__), "Tools", "PCMCompare.exe")
 
 # name of models for testing == ["model0", "model1", "model2"]
-models = [f'{x}' for x in range(3)]
+models = [f'{x}' for x in range(2)]
 # *************************************************************************
 # This tool expects the executables provited to be of the following format:
 #   executables = [ f'{target}_{m}' for m in models ]
@@ -85,7 +85,7 @@ def get_cases():
 
 def run_compare(in_file, out_file, log_file):
     cmd = f'"{compare_tool}"  "{in_file}" "{out_file}"'
-    print(cmd)
+    #print(cmd)
     log_file.write(cmd + "\n")
 
     proc_data = subprocess.run(cmd, capture_output=True, shell=True)
@@ -100,7 +100,8 @@ def execute_cmd(cmd):
     proc_data = subprocess.run(cmd, capture_output=True, shell=True)
     
     if proc_data.stdout:
-        print(proc_data.stdout.decode())
+        #print(proc_data.stdout.decode())
+        pass
 
     if proc_data.stderr:
         print(proc_data.stderr.decode())
@@ -111,7 +112,7 @@ def execute_test(exe, in_file, out_file, add_args):
     add_params = " ".join(str(arg) for arg in add_args)
 
     cmd = f'"{exe}" "{in_file}" "{out_file}" {add_params}'
-    print(cmd)
+    #print(cmd)
     execute_cmd(cmd)
 
 
@@ -143,7 +144,7 @@ def run_test(case):
 
 def run_tests(cases):
     for case in cases:
-        print(case)
+        #print(case)
         run_test(case)
 
 

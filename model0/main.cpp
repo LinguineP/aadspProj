@@ -103,23 +103,17 @@ void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double*
 	for (int j = 0; j < nSamples; j++)
 	{
 		// first stage, apply inputGain on L & R channels 
-		pIn[L_CH][j] = saturation(pIn[L_CH][j] * variableGains[L_CH], limiterThreshold);
-		pIn[R_CH][j] = saturation(pIn[R_CH][j] * variableGains[R_CH], limiterThreshold);
+		pOut[L_CH][j] = saturation(pIn[L_CH][j] * variableGains[L_CH], limiterThreshold);
+		pOut[R_CH][j] = saturation(pIn[R_CH][j] * variableGains[R_CH], limiterThreshold);
 		//passing through processed L & R channels To Ls and Rs channels
-		pOut[LS_CH][j] = pIn[L_CH][j];
-		pOut[RS_CH][j] = pIn[R_CH][j];
+		pOut[LS_CH][j] = pOut[L_CH][j];
+		pOut[RS_CH][j] = pOut[R_CH][j];
 		// 
 		if (modeFlag) 
 		{ //doing fir filtering on L&R channels
-			pOut[L_CH][j] = fir_basic(pIn[L_CH][j],hpfCoeffs,hpfHistoryBuff,n_coeffs);
-			pOut[R_CH][j] = fir_basic(pIn[R_CH][j],lpfCoeffs,lpfHistoryBuff,n_coeffs);
+			pOut[L_CH][j] = fir_basic(pOut[L_CH][j],hpfCoeffs,hpfHistoryBuff,n_coeffs);
+			pOut[R_CH][j] = fir_basic(pOut[R_CH][j],lpfCoeffs,lpfHistoryBuff,n_coeffs);
 		
-		}
-		else
-		{
-			pOut[L_CH][j] = pIn[L_CH][j];
-			pOut[R_CH][j] = pIn[R_CH][j];
-
 		}
 
 		// generate C_CH as a sum of L & R output channels

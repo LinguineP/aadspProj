@@ -31,7 +31,7 @@ def get_params():
     params = [
         [0, 1],					# enable
         ["0.999", "-0.999","0.7071"],	# gain //last gain is defaultd
-        ["0.999", "-0.999"],	# gain 
+        ["0.999", "-0.999","0.7071"],	# gain 
         ["0", "1"]		#  mode
     ]
 

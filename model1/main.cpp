@@ -62,8 +62,46 @@ void initGainProcessing(double* defaultVariablesGain)
 	}
 }
 
+double saturation(double in)
+{
+	//a simple limiter in case a value goes out of range
+	if (in > limiterThreshold)
+	{
+		return fmin(in, limiterThreshold);
+	}
+	else if (in < -limiterThreshold)
+	{
+		return fmax(in, -limiterThreshold);
+	}
+
+	return in;
+}
+
 double fir_basic(double input, double* coeffs, double* history)
 {
+	/*
+	int i;
+	double ret_val = 0;
+
+	// shift delay line 
+	for (i = FILTER_LENGHT - 2; i >= 0; i--)
+	{
+		history[i + 1] = history[i];
+	}
+
+	// store input at the beginning of the delay line 
+	history[0] = input;
+
+
+	// calc FIR 
+	for (i = 0; i < FILTER_LENGHT; i++)
+	{
+		ret_val += coeffs[i] * history[i];
+	}
+
+	return ret_val;*/
+	
+	
 	int i;
 	double ret_val = 0;
 
@@ -80,13 +118,13 @@ double fir_basic(double input, double* coeffs, double* history)
 	}
 	
 	historyBufferPtr++; //ptr was pointing one place before the beggining setting it to point to beggining of the array
-	/* store input at the beginning of the delay line */
+	// store input at the beginning of the delay line 
 	*historyBufferPtr = input; 
 
 	//initilising coeff pointer
 	double* coeffsPtr = coeffs;
 
-	/* calc FIR via convolution*/
+	// calc FIR via convolution
 	for (i = 0; i < FILTER_LENGHT; i++)
 	{
 		ret_val += ((*coeffsPtr) * (*historyBufferPtr)); //descrete convolution 
@@ -96,20 +134,7 @@ double fir_basic(double input, double* coeffs, double* history)
 	return ret_val;
 }
 
-double saturation(double in)
-{
-	//a simple limiter in case a value goes out of range
-	if (in > limiterThreshold)
-	{
-		return fmin(in, limiterThreshold);
-	}
-	else if (in < -limiterThreshold)
-	{
-		return fmax(in, -limiterThreshold);
-	}
 
-	return in;
-}
 
 void processing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE])
 {
@@ -131,10 +156,10 @@ void processing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE])
 	{
 		//first stage, apply inputGain on L & R channels 
 		//pIn[L_CH][j] = saturation(pIn[L_CH][j] * variablesGain[L_CH]);
-		*L_CH_Out_Ptr = saturation((*L_CH_Out_Ptr) * (*gains));
+		*L_CH_Out_Ptr = saturation((*L_CH_In_Ptr) * (*gains));
 		//pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
 		gains++;
-		*R_CH_Out_Ptr = saturation((*R_CH_Out_Ptr) * (*gains));
+		*R_CH_Out_Ptr = saturation((*R_CH_In_Ptr) * (*gains));
 		gains--;
 		//passing through processed L & R channels To Ls and Rs channels
 		*LS_CH_Out_Ptr = *L_CH_Out_Ptr;
@@ -146,18 +171,21 @@ void processing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE])
 			*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
 		
 		}
-		else
+		/*else
 		{	// bypassing filtering
 			*L_CH_Out_Ptr = *L_CH_Out_Ptr;
 			*R_CH_Out_Ptr = *R_CH_Out_Ptr;
 
-		}
+		}*/
 
 		// generate C_CH as a sum of L & R output channels
 		*C_CH_Out_Ptr = (*L_CH_Out_Ptr) + (*R_CH_Out_Ptr);
 
 
 		//move through a buffer
+		L_CH_In_Ptr++;
+		R_CH_In_Ptr++;
+
 		L_CH_Out_Ptr++;
 		R_CH_Out_Ptr++;
 		LS_CH_Out_Ptr++;
