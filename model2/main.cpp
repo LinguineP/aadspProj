@@ -158,8 +158,7 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 		
 		processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
 		processed_R_CH = (DSPfract)*R_CH_Out_Ptr;
-		//processed_L_CH = processed_L_CH << 1;
-		//processed_R_CH = processed_R_CH << 1; // da bi se dobilo dobro resenje za sabiranje
+		
 
 
 		// generate C_CH as a sum of L & R output channels
