@@ -89,7 +89,7 @@ def run_test(case):
     out_files = []
   
     exe = os.path.join(executables_root, f'{target}.exe')
-    out_file = os.path.join(test_dir, f'out_{test_name}_m0.wav')
+    out_file = os.path.join(test_dir, f'out_{test_name}_m1.wav')
     out_files.append(out_file)
     execute_test(exe, case[0], out_file, case[1])
 

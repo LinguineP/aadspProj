@@ -11,7 +11,7 @@
 
 
 // default Input gain values. 
-#define MINUS_3DB 0.7071
+#define MINUS_3DB FRACT_NUM(0.7071)
 
 
 // User commands
@@ -28,7 +28,7 @@ static DSPfract sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
 static DSPfract inputGain;
 static DSPfract postGain;
 static DSPfract variablesGain[INPUT_NUM_CHANNELS];
-static DSPfract limiterThreshold = 0.999;
+static DSPfract limiterThreshold = FRACT_NUM(0.999);
 
 void initGainProcessing(DSPfract* defaultVariablesGain)
 {
@@ -96,11 +96,11 @@ DSPfract saturation(DSPfract in)
 	//a simple limiter in case a value goes out of range
 	if (in > limiterThreshold)
 	{
-		return fmin(in, limiterThreshold);
+		return  limiterThreshold;
 	}
 	else if (in < -limiterThreshold)
 	{
-		return fmax(in, -limiterThreshold);
+		return  -limiterThreshold;
 	}
 
 	return in;
@@ -120,9 +120,9 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 	DSPfract* RS_CH_Out_Ptr = *(pOut + RS_CH);
 	DSPfract* LS_CH_Out_Ptr = *(pOut + LS_CH);
 	DSPfract* gains = variablesGain;
-	DSPfract processed_L_CH;
-	DSPfract processed_R_CH;
-	DSPaccum centerSum;
+	DSPaccum processed_L_CH=0.0;
+	DSPaccum processed_R_CH=0.0;
+	DSPaccum centerSum=0.0;
 
 	for (DSPint j = 0; j < BLOCK_SIZE; j++)
 	{
@@ -130,18 +130,18 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 		//*L_CH_Out_Ptr = saturation((*L_CH_Out_Ptr) * (*gains));
 		processed_L_CH = (DSPfract)(*L_CH_In_Ptr) * (DSPfract)(*gains);
 		//processed_L_CH = processed_L_CH << 1;
-		*L_CH_Out_Ptr = (DSPfract)processed_L_CH;
+		*L_CH_Out_Ptr = (DSPfract)saturation(processed_L_CH);
 		gains++;
 		
 		//pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
 		processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(*gains);
 		//processed_R_CH = processed_R_CH << 1;
-		*R_CH_Out_Ptr = (DSPfract)processed_R_CH;
+		*R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
 		gains--;
 		
 		//passing through processed L & R channels To Ls and Rs channels
-		*LS_CH_Out_Ptr = *L_CH_Out_Ptr;
-		*RS_CH_Out_Ptr = *R_CH_Out_Ptr;
+		*LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
+		*RS_CH_Out_Ptr = (DSPfract)processed_R_CH;
 	
 		if (modeFlag) 
 		{	//doing fir filtering on L&R channels
@@ -156,15 +156,23 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 
 		}*/
 		
-		processed_L_CH = *L_CH_Out_Ptr;
-		processed_R_CH = *R_CH_Out_Ptr;
-
+		processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+		processed_R_CH = (DSPfract)*R_CH_Out_Ptr;
+		//processed_L_CH = processed_L_CH << 1;
+		//processed_R_CH = processed_R_CH << 1; // da bi se dobilo dobro resenje za sabiranje
 
 
 		// generate C_CH as a sum of L & R output channels
-		centerSum = processed_L_CH + processed_R_CH;
-		*C_CH_Out_Ptr = (DSPfract)centerSum;
+		centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
+		*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
 
+		//*LS_CH_Out_Ptr=0.0;
+		//*RS_CH_Out_Ptr=0.0;
+		//*C_CH_Out_Ptr=0.0;
+		
+
+		L_CH_In_Ptr++;
+		R_CH_In_Ptr++;
 		//move through a buffer
 		L_CH_Out_Ptr++;
 		R_CH_Out_Ptr++;
@@ -215,8 +223,8 @@ int main(int argc, char* argv[])
 
 	//if all arguments passed else default 
 	if (argc ==FULL_ARGS_PASSED) {
-		defaultVariablesGain[0] = atof(argv[4]); //sets variable gain L
-		defaultVariablesGain[1] = atof(argv[5]); //sets variable gain R
+		defaultVariablesGain[0] = (DSPfract)atof(argv[4]); //sets variable gain L
+		defaultVariablesGain[1] = (DSPfract)atof(argv[5]); //sets variable gain R
 
 		enableFlag = atoi(argv[3]); //sets the enable flag
 		modeFlag = atoi(argv[6]);	//sets the mode
@@ -284,6 +292,7 @@ int main(int argc, char* argv[])
 
 			//gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double* variableGains,
 			//double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs, int nSamples)
+
 			if(enableFlag)
 			{
 				processing(sampleBuffer, sampleBuffer);

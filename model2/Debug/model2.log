@@ -1,2 +1,6 @@
 ﻿  main.cpp
+D:\fax\aadspproj\aadspProj\model2\main.cpp(14,1): warning C4005: 'MINUS_3DB': macro redefinition
+  D:\fax\aadspproj\aadspProj\model2\common.h(30,1):
+  see previous definition of 'MINUS_3DB'
+  
   model2.vcxproj -> D:\fax\aadspproj\aadspProj\model2\Debug\model2.exe

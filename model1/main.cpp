@@ -179,7 +179,7 @@ void processing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE])
 		}*/
 
 		// generate C_CH as a sum of L & R output channels
-		*C_CH_Out_Ptr = (*L_CH_Out_Ptr) + (*R_CH_Out_Ptr);
+		*C_CH_Out_Ptr =saturation((*L_CH_Out_Ptr) + (*R_CH_Out_Ptr));
 
 
 		//move through a buffer
