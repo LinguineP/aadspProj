@@ -14,7 +14,7 @@ executables_root = os.path.join(os.path.dirname(__file__), "bin")
 compare_tool = os.path.join(os.path.dirname(__file__), "Tools", "PCMCompare.exe")
 
 # name of models for testing == ["model0", "model1", "model2"]
-models = [f'{x}' for x in range(2)]
+models = [f'{x}' for x in range(3)]
 # *************************************************************************
 # This tool expects the executables provited to be of the following format:
 #   executables = [ f'{target}_{m}' for m in models ]

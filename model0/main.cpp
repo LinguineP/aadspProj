@@ -117,7 +117,7 @@ void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double*
 		}
 
 		// generate C_CH as a sum of L & R output channels
-		pOut[C_CH][j] = saturation(pOut[L_CH][j] + pOut[R_CH][j],limiterThreshold);
+		pOut[C_CH][j] = saturation((pOut[L_CH][j] + pOut[R_CH][j]),limiterThreshold);
 
 		
 	}

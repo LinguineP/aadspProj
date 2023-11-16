@@ -79,6 +79,7 @@ DSPfract fir_basic(DSPfract input, DSPfract* coeffs, DSPfract* history)
 	//initilising coeff pointer
 	DSPfract* coeffsPtr = coeffs;
 	DSPaccum multiplyResult;
+
 	/* calc FIR via convolution*/
 	for (i = 0; i < FILTER_LENGHT; i++)
 	{
