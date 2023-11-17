@@ -4,21 +4,14 @@
       No differences encountered!
 
 "d:\fax\aadspproj\aadspProj\testing\Tools\PCMCompare.exe"  "d:\fax\aadspproj\aadspProj\testing\test_outputs\WhiteNoise_1_-0.999_-0.999_0\out_WhiteNoise_1_-0.999_-0.999_0_1.wav" "d:\fax\aadspproj\aadspProj\testing\test_outputs\WhiteNoise_1_-0.999_-0.999_0\out_WhiteNoise_1_-0.999_-0.999_0_2.wav"
-    Max difference is 16768827 (24 bits, -0.00dB)
+    Max difference is 1 (1 bits, -144.49dB)
     4800000 samples compared 
    -----------------------------------------------------------
     Dif(bits) |    Samples    |   PERCENT  |   First dif
    -----------------------------------------------------------
          1    |       5418    |    0.11%   |  0x0000003e   
-         8    |          4    |    0.00%   |  0x000c1445   
-        10    |          1    |    0.00%   |  0x0005fdad   
-        11    |          2    |    0.00%   |  0x0000e6ba   
-        12    |          5    |    0.00%   |  0x000d8410   
-        13    |          6    |    0.00%   |  0x003cb6cc   
-        14    |        764    |    0.02%   |  0x00002c66   
-        24    |        695    |    0.01%   |  0x0000998f   
    -----------------------------------------------------------
-      Error   |       6895    |    0.14%              
+      Error   |       5418    |    0.11%              
 
-    Max difference is 16768827 (24 bits, -0.00dB)
+    Max difference is 1 (1 bits, -144.49dB)
 

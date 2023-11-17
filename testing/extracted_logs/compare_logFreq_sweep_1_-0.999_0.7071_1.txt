@@ -4,22 +4,14 @@
       No differences encountered!
 
 "d:\fax\aadspproj\aadspProj\testing\Tools\PCMCompare.exe"  "d:\fax\aadspproj\aadspProj\testing\test_outputs\Freq_sweep_1_-0.999_0.7071_1\out_Freq_sweep_1_-0.999_0.7071_1_1.wav" "d:\fax\aadspproj\aadspProj\testing\test_outputs\Freq_sweep_1_-0.999_0.7071_1\out_Freq_sweep_1_-0.999_0.7071_1_2.wav"
-    Max difference is 16768827 (24 bits, -0.00dB)
+    Max difference is 1 (1 bits, -144.49dB)
     7200000 samples compared 
    -----------------------------------------------------------
     Dif(bits) |    Samples    |   PERCENT  |   First dif
    -----------------------------------------------------------
          1    |      29670    |    0.41%   |  0x000001dc   
-         8    |          2    |    0.00%   |  0x01162808   
-         9    |          5    |    0.00%   |  0x01113b36   
-        10    |         13    |    0.00%   |  0x01075b5c   
-        11    |         22    |    0.00%   |  0x01064a14   
-        12    |         44    |    0.00%   |  0x01060595   
-        13    |         90    |    0.00%   |  0x010652fc   
-        14    |      17193    |    0.24%   |  0x01064aaa   
-        24    |      17119    |    0.24%   |  0x01060829   
    -----------------------------------------------------------
-      Error   |      64158    |    0.89%              
+      Error   |      29670    |    0.41%              
 
-    Max difference is 16768827 (24 bits, -0.00dB)
+    Max difference is 1 (1 bits, -144.49dB)
 
