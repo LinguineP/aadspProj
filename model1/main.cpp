@@ -25,7 +25,7 @@
 
 
 // number of args
-#define FULL_ARGS_PASSED 7
+#define FULL_ARGS_PASSED 6
 
 
 // DEFAULT VALUES
@@ -49,17 +49,9 @@ static double postGain;
 static double variablesGain[INPUT_NUM_CHANNELS];
 static double limiterThreshold = 0.999;
 
-void initGainProcessing(double* defaultVariablesGain)
+void initGainProcessing(double preGainValue)
 {
-	// initialises gains
-	double* defaultVariablesGainPtr = defaultVariablesGain;
-	double* variablesGainPtr = variablesGain;
-	for (int i = 0; i < INPUT_NUM_CHANNELS; i++)
-	{
-		*variablesGainPtr = *defaultVariablesGainPtr;
-		variablesGainPtr++;
-		defaultVariablesGainPtr++;
-	}
+	inputGain = preGainValue;
 }
 
 double saturation(double in)
@@ -149,18 +141,17 @@ void processing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE])
 	double* C_CH_Out_Ptr = *(pOut + C_CH);
 	double* RS_CH_Out_Ptr = *(pOut + RS_CH);
 	double* LS_CH_Out_Ptr = *(pOut + LS_CH);
-	double* gains = variablesGain;
+
 
 
 	for (int j = 0; j < BLOCK_SIZE; j++)
 	{
 		//first stage, apply inputGain on L & R channels 
 		//pIn[L_CH][j] = saturation(pIn[L_CH][j] * variablesGain[L_CH]);
-		*L_CH_Out_Ptr = saturation((*L_CH_In_Ptr) * (*gains));
+		*L_CH_Out_Ptr = saturation((*L_CH_In_Ptr) * inputGain);
 		//pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
-		gains++;
-		*R_CH_Out_Ptr = saturation((*R_CH_In_Ptr) * (*gains));
-		gains--;
+		*R_CH_Out_Ptr = saturation((*R_CH_In_Ptr) * inputGain);
+		
 		//passing through processed L & R channels To Ls and Rs channels
 		*LS_CH_Out_Ptr = *L_CH_Out_Ptr;
 		*RS_CH_Out_Ptr = *R_CH_Out_Ptr;
@@ -226,19 +217,16 @@ int main(int argc, char* argv[])
 	char WavInputName[256];
 	char WavOutputName[256];
 	WAV_HEADER inputWAVhdr, outputWAVhdr;
-	double defaultVariablesGain[INPUT_NUM_CHANNELS] = { MINUS_3DB , MINUS_3DB }; // -3dB, -3dB
+	double preGain = MINUS_3DB; // -3dB
 	enableFlag = DEFAULTENABLE;
 	modeFlag = DEFAULTMODE;
 
 
-
 	//if all arguments passed else default 
 	if (argc == FULL_ARGS_PASSED) {
-		defaultVariablesGain[0] = atof(argv[4]); //sets variable gain L
-		defaultVariablesGain[1] = atof(argv[5]); //sets variable gain R
-
+		preGain = atof(argv[4]); //sets input Gain
 		enableFlag = atoi(argv[3]); //sets the enable flag
-		modeFlag = atoi(argv[6]);	//sets the mode
+		modeFlag = atoi(argv[5]);	//sets the mode
 	}
 	// Init channel buffers
 	for (int i = 0; i < MAX_NUM_CHANNEL; i++)
@@ -252,7 +240,6 @@ int main(int argc, char* argv[])
 	strcpy(WavOutputName, argv[2]);
 	wav_out = OpenWavFileForRead(WavOutputName, (char*) "wb");
 	//-------------------------------------------------
-
 	// Read input wav header
 	//-------------------------------------------------
 	ReadWavHeader(wav_in, inputWAVhdr);
@@ -261,7 +248,9 @@ int main(int argc, char* argv[])
 	// Set up output WAV header
 	//-------------------------------------------------	
 	outputWAVhdr = inputWAVhdr;
-	outputWAVhdr.fmt.NumChannels = OUTPUT_NUM_CHANNELS; // change number of channels
+	if (enableFlag) {
+		outputWAVhdr.fmt.NumChannels = OUTPUT_NUM_CHANNELS;// change number of channels
+	}
 
 	int oneChannelSubChunk2Size = inputWAVhdr.data.SubChunk2Size / inputWAVhdr.fmt.NumChannels;
 	int oneChannelByteRate = inputWAVhdr.fmt.ByteRate / inputWAVhdr.fmt.NumChannels;
@@ -276,7 +265,7 @@ int main(int argc, char* argv[])
 	//-------------------------------------------------
 	WriteWavHeader(wav_out, outputWAVhdr);
 
-	initGainProcessing(defaultVariablesGain);
+	initGainProcessing(preGain);
 
 	// Processing loop
 	//-------------------------------------------------	

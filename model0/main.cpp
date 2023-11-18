@@ -13,7 +13,7 @@
 #define OUTPUT_NUM_CHANNELS 5
 
 // number of args
-#define FULL_ARGS_PASSED 7
+#define FULL_ARGS_PASSED 6
 
 // DEFAULT VALUES
 #define DEFAULTENABLE 1
@@ -46,16 +46,11 @@ static double sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
 
 // Processing related variables
 static double inputGain;
-static double postGain;
-static double variablesGain[INPUT_NUM_CHANNELS];
 static double limiterThreshold = 0.999;
 
-void initGainProcessing(double* defaultVariablesGain)
+void initGainProcessing(double preGainValue)
 {
-	for (int i = 0; i < INPUT_NUM_CHANNELS; i++)
-	{
-		variablesGain[i] = defaultVariablesGain[i];
-	}
+	inputGain = preGainValue;
 }
 
 double fir_basic(double input, double* coeffs, double* history, unsigned int n_coeff)
@@ -97,14 +92,14 @@ double saturation(double in, double threshold)
 	return in;
 }
 
-void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double* variableGains,
+void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double preGain,
 					double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs,int nSamples)
 {
 	for (int j = 0; j < nSamples; j++)
 	{
 		// first stage, apply inputGain on L & R channels 
-		pOut[L_CH][j] = saturation(pIn[L_CH][j] * variableGains[L_CH], limiterThreshold);
-		pOut[R_CH][j] = saturation(pIn[R_CH][j] * variableGains[R_CH], limiterThreshold);
+		pOut[L_CH][j] = saturation(pIn[L_CH][j] * preGain, limiterThreshold);
+		pOut[R_CH][j] = saturation(pIn[R_CH][j] * preGain, limiterThreshold);
 		//passing through processed L & R channels To Ls and Rs channels
 		pOut[LS_CH][j] = pOut[L_CH][j];
 		pOut[RS_CH][j] = pOut[R_CH][j];
@@ -152,18 +147,17 @@ int main(int argc, char* argv[])
 	char WavInputName[256];
 	char WavOutputName[256];
 	WAV_HEADER inputWAVhdr, outputWAVhdr;
-	double defaultVariablesGain[INPUT_NUM_CHANNELS] = { MINUS_3DB , MINUS_3DB }; // -3dB, -3dB
+	double preGain= MINUS_3DB; // -3dB
 	enableFlag = DEFAULTENABLE;
 	modeFlag = DEFAULTMODE;
 
 
 	//if all arguments passed else default 
 	if (argc == FULL_ARGS_PASSED) {
-		defaultVariablesGain[0] = atof(argv[4]); //sets variable gain L
-		defaultVariablesGain[1] = atof(argv[5]); //sets variable gain R
+		preGain = atof(argv[4]); //sets input Gain
 
 		enableFlag = atoi(argv[3]); //sets the enable flag
-		modeFlag = atoi(argv[6]);	//sets the mode
+		modeFlag = atoi(argv[5]);	//sets the mode
 	}
 	// Init channel buffers
 	for (int i = 0; i < MAX_NUM_CHANNEL; i++)
@@ -186,7 +180,9 @@ int main(int argc, char* argv[])
 	// Set up output WAV header
 	//-------------------------------------------------	
 	outputWAVhdr = inputWAVhdr;
-	outputWAVhdr.fmt.NumChannels = OUTPUT_NUM_CHANNELS; // change number of channels
+	if (enableFlag) {
+		outputWAVhdr.fmt.NumChannels = OUTPUT_NUM_CHANNELS;// change number of channels
+	}
 
 	int oneChannelSubChunk2Size = inputWAVhdr.data.SubChunk2Size / inputWAVhdr.fmt.NumChannels;
 	int oneChannelByteRate = inputWAVhdr.fmt.ByteRate / inputWAVhdr.fmt.NumChannels;
@@ -201,7 +197,7 @@ int main(int argc, char* argv[])
 	//-------------------------------------------------
 	WriteWavHeader(wav_out, outputWAVhdr);
 
-	initGainProcessing(defaultVariablesGain);
+	initGainProcessing(preGain);
 
 	// Processing loop
 	//-------------------------------------------------	
@@ -229,7 +225,7 @@ int main(int argc, char* argv[])
 			//double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs, int nSamples)
 			if(enableFlag)
 			{
-				gainProcessing(sampleBuffer, sampleBuffer, variablesGain, hpfCoefs,lpfCoefs,hpfHistoryBuffer,lpfHistoryBuffer,FILTER_LENGHT,BLOCK_SIZE);
+				gainProcessing(sampleBuffer, sampleBuffer, preGain, hpfCoefs,lpfCoefs,hpfHistoryBuffer,lpfHistoryBuffer,FILTER_LENGHT,BLOCK_SIZE);
 			}
 
 			for (int j = 0; j < BLOCK_SIZE; j++)

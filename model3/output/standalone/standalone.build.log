@@ -1,0 +1,411 @@
+============= BUILDING STARTED ============
+  Project: model3
+===========================================
+Compiling .c files...
+   [delete] Deleting: D:\fax\aadspproj\aadspProj\model3\output\standalone\src\main.O
+   [delete] Deleting: D:\fax\aadspproj\aadspProj\model3\output\standalone\src\main.s
+D:/fax/aadspproj/aadspProj/model3/src/main.cpp
+C:/CirrusDSP/bin/ccc2 D:/fax/aadspproj/aadspProj/model3/src/main.cpp
+ -S
+ -ruf
+ -fcse
+ -fprc
+ -fcompact
+ -funsafe-loop-optimizations
+ -g
+ -edi
+ -emit-hints
+ -ira
+ -fconst-pool=X
+ -fno0init
+ -femit-asm-struct
+ -cdl
+ -D_TOOLS_VERSION_=0x0701
+ -D_SLOT_=0
+ -D_OVLY_=standalone
+ -D_OVLY_REVISION_=020000
+ -D_VERSION_=00
+ -D_DSP_=a
+ -D_COMMON_INC_PATH_=C:/CirrusDSP/crystal32/common/inc/
+ -D_TARGET_FAMILY_=crystal32
+ -D_MUI_VERSION_=020000
+ -IC:/CirrusDSP/include/
+ -IC:/CirrusDSP/include/dsplib/
+ -ID:/fax/aadspproj/aadspProj/model3/inc/
+ -oD:/fax/aadspproj/aadspProj/model3/output/standalone/src/main.s
+ -D_LOCAL_SRC_PATH_=src/
+ -D_LOCAL_INC_PATH_=inc/
+ -D_ROUTER_INC_PATH_=rom_inc/
+     [exec] "C:/CirrusDSP/include/stdio.h", line 8: warning #1108: #warning directive: Functionality of stdio.h header file is not fully supported
+     [exec]   #warning Functionality of stdio.h header file is not fully supported
+     [exec]    ^
+     [exec] 
+     [exec] "C:/CirrusDSP/include/string.h", line 8: warning #1108: #warning directive: Functionality of string.h header file is not fully supported
+     [exec]   #warning Functionality of string.h header file is not fully supported
+     [exec]    ^
+     [exec] 
+     [exec] "C:/CirrusDSP/include/string.h", line 13: warning #303: typedef name has already been declared (with same type)
+     [exec]   typedef unsigned int size_t;
+     [exec]                        ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 7: warning #31: fixed point constant is out of range
+     [exec]           -0.023825414913247807,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 8: warning #31: fixed point constant is out of range
+     [exec]           -0.008549933436002089,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 9: warning #31: fixed point constant is out of range
+     [exec]           0.014046355447925181,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 10: warning #31: fixed point constant is out of range
+     [exec]           0.035760793575443775,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 11: warning #31: fixed point constant is out of range
+     [exec]           0.046788274503053173,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 12: warning #31: fixed point constant is out of range
+     [exec]           0.038931420914149382,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 13: warning #31: fixed point constant is out of range
+     [exec]           0.008623710474584283,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 14: warning #31: fixed point constant is out of range
+     [exec]           -0.041293007594434203,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 15: warning #31: fixed point constant is out of range
+     [exec]           -0.101732705472882379,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 16: warning #31: fixed point constant is out of range
+     [exec]           -0.159543929922458555,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 17: warning #31: fixed point constant is out of range
+     [exec]           -0.201100722490045764,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 18: warning #31: fixed point constant is out of range
+     [exec]           0.783790317827829930,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 19: warning #31: fixed point constant is out of range
+     [exec]           -0.201100722490045764,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 20: warning #31: fixed point constant is out of range
+     [exec]           -0.159543929922458555,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 21: warning #31: fixed point constant is out of range
+     [exec]           -0.101732705472882379,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 22: warning #31: fixed point constant is out of range
+     [exec]           -0.041293007594434203,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 23: warning #31: fixed point constant is out of range
+     [exec]           0.008623710474584283,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 24: warning #31: fixed point constant is out of range
+     [exec]           0.038931420914149382,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 25: warning #31: fixed point constant is out of range
+     [exec]           0.046788274503053173,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 26: warning #31: fixed point constant is out of range
+     [exec]           0.035760793575443775,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 27: warning #31: fixed point constant is out of range
+     [exec]           0.014046355447925181,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 28: warning #31: fixed point constant is out of range
+     [exec]           -0.008549933436002089,
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 29: warning #31: fixed point constant is out of range
+     [exec]           -0.023825414913247807
+     [exec]           ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 33: warning #31: fixed point constant is out of range
+     [exec]       0.023825414913247807,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 34: warning #31: fixed point constant is out of range
+     [exec]       0.008549933436002089,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 35: warning #31: fixed point constant is out of range
+     [exec]       -0.014046355447925181,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 36: warning #31: fixed point constant is out of range
+     [exec]       -0.035760793575443775,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 37: warning #31: fixed point constant is out of range
+     [exec]       -0.046788274503053173,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 38: warning #31: fixed point constant is out of range
+     [exec]       -0.038931420914149382,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 39: warning #31: fixed point constant is out of range
+     [exec]       -0.008623710474584283,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 40: warning #31: fixed point constant is out of range
+     [exec]       0.041293007594434203,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 41: warning #31: fixed point constant is out of range
+     [exec]       0.101732705472882379,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 42: warning #31: fixed point constant is out of range
+     [exec]       0.159543929922458555,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 43: warning #31: fixed point constant is out of range
+     [exec]       0.201100722490045764,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 44: warning #31: fixed point constant is out of range
+     [exec]       0.216209682172170098,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 45: warning #31: fixed point constant is out of range
+     [exec]       0.201100722490045764,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 46: warning #31: fixed point constant is out of range
+     [exec]       0.159543929922458555,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 47: warning #31: fixed point constant is out of range
+     [exec]       0.101732705472882379,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 48: warning #31: fixed point constant is out of range
+     [exec]       0.041293007594434203,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 49: warning #31: fixed point constant is out of range
+     [exec]       -0.008623710474584283,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 50: warning #31: fixed point constant is out of range
+     [exec]       -0.038931420914149382,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 51: warning #31: fixed point constant is out of range
+     [exec]       -0.046788274503053173,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 52: warning #31: fixed point constant is out of range
+     [exec]       -0.035760793575443775,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 53: warning #31: fixed point constant is out of range
+     [exec]       -0.014046355447925181,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 54: warning #31: fixed point constant is out of range
+     [exec]       0.008549933436002089,
+     [exec]       ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/FIRcoefs.h", line 55: warning #31: fixed point constant is out of range
+     [exec]       0.023825414913247807
+     [exec]       ^
+     [exec] 
+     [exec] "C:/CirrusDSP/include/ctype.h", line 8: warning #1108: #warning directive: Functionality of ctype.h header file is not supported
+     [exec]   #warning Functionality of ctype.h header file is not supported
+     [exec]    ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 118: warning #31: fixed point constant is out of range
+     [exec]   	DSPaccum processed_L_CH=0.0;
+     [exec]   	                        ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 119: warning #31: fixed point constant is out of range
+     [exec]   	DSPaccum processed_R_CH=0.0;
+     [exec]   	                        ^
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 120: warning #31: fixed point constant is out of range
+     [exec]   	DSPaccum centerSum=0.0;
+     [exec]   	                   ^
+     [exec] 
+     [exec] WARNING: '-unsafe-loop-optimization' is ignored when '-g' option is used!
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 38: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 39: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 53: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 53: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 59: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 61: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 62: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 106: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 106: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 109: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 110: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 113: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 114: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 115: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 116: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 117: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 205: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 207: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 208: warning #4007: Pointer to unspecified memory zone.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 298: info: Hardware loop is not emitted due to: 
+     [exec] Upper bound and initial loop index value are not constant.
+     [exec] Make them constant or try using -funsafe-loop-optimizations option.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 313: info: Hardware loop is not emitted due to: 
+     [exec] Upper bound and initial loop index value are not constant.
+     [exec] Make them constant or try using -funsafe-loop-optimizations option.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 294: info: Hardware loop is not emitted due to: 
+     [exec] Upper bound and initial loop index value are not constant.
+     [exec] Make them constant or try using -funsafe-loop-optimizations option.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 59: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 129: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 134: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 137: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 138: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 159: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 159: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 160: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 41: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 42: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 247: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 294: info: Call to runtime function __div. Look at the separate document for information how to avoid this call.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 301: info: SRS is used at this line.
+     [exec] 
+     [exec] "D:/fax/aadspproj/aadspProj/model3/src/main.cpp", line 315: info: SRS is used at this line.
+     [exec] 
+     [exec] FRONT END TIME: 0 seconds
+     [exec] BACK  END TIME: 1 seconds
+     [exec] 
+Assembling .a and .s files...
+D:/fax/aadspproj/aadspProj/model3/output/standalone/src/main.s
+C:/CirrusDSP/bin/casm D:/fax/aadspproj/aadspProj/model3/output/standalone/src/main.s
+ --debug
+ -c
+ -s
+ -e
+ -D_TOOLS_VERSION_=0x0701
+ -D_SLOT_=0
+ -D_OVLY_=standalone
+ -D_OVLY_REVISION_=020000
+ -D_VERSION_=00
+ -D_DSP_=a
+ -D_COMMON_INC_PATH_=C:/CirrusDSP/crystal32/common/inc/
+ -D_TARGET_FAMILY_=crystal32
+ -D_MUI_VERSION_=020000
+ -IC:/CirrusDSP/include/
+ -IC:/CirrusDSP/include/dsplib/
+ -ID:/fax/aadspproj/aadspProj/model3/inc/
+ -lD:/fax/aadspproj/aadspProj/model3/output/standalone/src/main.lst
+ -oD:/fax/aadspproj/aadspProj/model3/output/standalone/src/main.O
+ -iC:/CirrusDSP/crystal32/common/inc/base.h
+ -D_LOCAL_SRC_PATH_=src/
+ -D_LOCAL_INC_PATH_=inc/
+ -D_ROUTER_INC_PATH_=rom_inc/
+Linking files...
+C:/CirrusDSP/bin/clink
+ -oD:/fax/aadspproj/aadspProj/model3/output/standalone/model3.img
+ -fC:/CirrusDSP/crystal32/memory_maps/v00.mem.xml
+ --output_type=RAM
+ --overlay_type=standalone
+ -lC:/CirrusDSP/lib/
+ -lC:/CirrusDSP/lib/dsplib
+ -lC:/CirrusDSP/lib/dsplib/crystal32/
+D:/fax/aadspproj/aadspProj/model3/output/standalone/src/main.O
+     [exec] Warning #507: Unknown class: Y_OS_CC_GLOBALS
+     [exec]             for the segment: CC_HEAPSTEAL_VALUES
+     [exec]             from the module: C:\CirrusDSP\lib\dsplib\crystal32\cl_heapsteal.O
+     [exec] 
+     [exec] List of linked library's modules:
+     [exec] C:\CirrusDSP\lib\crt0.o
+     [exec] C:\CirrusDSP\lib\div.o
+     [exec] C:\CirrusDSP\lib\exit.o
+     [exec] C:\CirrusDSP\lib\simulator_stack.o
+     [exec] C:\CirrusDSP\lib\strcmp.o
+     [exec] C:\CirrusDSP\lib\strcpy_x2x.o
+     [exec] C:\CirrusDSP\lib\udiv.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_bits_per_sample.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_close.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_frame_rate.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_getnchannels.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_number_of_frames.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_open.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_recvsample.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavwrite_close.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavwrite_open.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavwrite_sendsample.o
+     [exec] C:\CirrusDSP\lib\dsplib\crystal32\printf.o
+Creating .uld file...
+C:/CirrusDSP/bin/lnkuld
+ -ja
+ D:/fax/aadspproj/aadspProj/model3/output/standalone/model3.img
+ D:/fax/aadspproj/aadspProj/model3/output/standalone/model3.uld
+     [exec] 
+     [exec] Reading file: D:/fax/aadspproj/aadspProj/model3/output/standalone/model3.img ...
+     [exec] 	Processed 798 line(s).
+     [exec] 
+     [exec] Writing output to file: D:/fax/aadspproj/aadspProj/model3/output/standalone/model3.uld ...
+     [exec] 
+     [exec] Done!
+     [exec] 
+     [exec] Writing output to file: D:/fax/aadspproj/aadspProj/model3/output/standalone/model3.uldb ...
+     [exec] 
+     [exec] Done!
+     [exec] 
+     [exec] Writing output to file: D:/fax/aadspproj/aadspProj/model3/output/standalone/model3.uldc ...
+
+BUILD SUCCESSFUL
+Total time: 3 seconds

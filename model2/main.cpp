@@ -10,8 +10,7 @@
 #define MAX_NUM_CHANNEL 8
 
 
-// default Input gain values. 
-#define MINUS_3DB FRACT_NUM(0.7071)
+
 
 
 // User commands
@@ -26,21 +25,13 @@ static DSPfract sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
 
 // Processing related variables
 static DSPfract inputGain;
-static DSPfract postGain;
-static DSPfract variablesGain[INPUT_NUM_CHANNELS];
 static DSPfract limiterThreshold = FRACT_NUM(0.999);
 
-void initGainProcessing(DSPfract* defaultVariablesGain)
+void initGainProcessing(DSPfract preGain)
 {
 	// initialises gains
-	DSPfract* defaultVariablesGainPtr = defaultVariablesGain;
-	DSPfract* variablesGainPtr = variablesGain;
-	for (DSPint i = 0; i < INPUT_NUM_CHANNELS; i++)
-	{
-		*variablesGainPtr = *defaultVariablesGainPtr;
-		variablesGainPtr++;
-		defaultVariablesGainPtr++;
-	}
+
+	inputGain = preGain;
 	DSPfract* hpfhistoryBuffPtr = hpfHistoryBuffer;
 	DSPfract* lpfhistoryBuffPtr = lpfHistoryBuffer;
 	for (DSPint i = 0; i < FILTER_LENGHT; i++)
@@ -120,7 +111,6 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 	DSPfract* C_CH_Out_Ptr = *(pOut + C_CH);
 	DSPfract* RS_CH_Out_Ptr = *(pOut + RS_CH);
 	DSPfract* LS_CH_Out_Ptr = *(pOut + LS_CH);
-	DSPfract* gains = variablesGain;
 	DSPaccum processed_L_CH=0.0;
 	DSPaccum processed_R_CH=0.0;
 	DSPaccum centerSum=0.0;
@@ -129,16 +119,14 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 	{
 		//first stage, apply inputGain on L & R channels 
 		//*L_CH_Out_Ptr = saturation((*L_CH_Out_Ptr) * (*gains));
-		processed_L_CH = (DSPfract)(*L_CH_In_Ptr) * (DSPfract)(*gains);
+		processed_L_CH = (DSPfract)(*L_CH_In_Ptr) * (DSPfract)(inputGain);
 		//processed_L_CH = processed_L_CH << 1;
 		*L_CH_Out_Ptr = (DSPfract)saturation(processed_L_CH);
-		gains++;
 		
 		//pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
-		processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(*gains);
+		processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(inputGain);
 		//processed_R_CH = processed_R_CH << 1;
 		*R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
-		gains--;
 		
 		//passing through processed L & R channels To Ls and Rs channels
 		*LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
@@ -214,20 +202,16 @@ int main(int argc, char* argv[])
 	char WavInputName[256];
 	char WavOutputName[256];
 	WAV_HEADER inputWAVhdr, outputWAVhdr;
-	DSPfract defaultVariablesGain[INPUT_NUM_CHANNELS] = { MINUS_3DB , MINUS_3DB }; // -3dB, -3dB
-
+	DSPfract preGain = MINUS_3DB; // -3dB
 	enableFlag = DEFAULTENABLE;
 	modeFlag = DEFAULTMODE;
 
 
-
 	//if all arguments passed else default 
-	if (argc ==FULL_ARGS_PASSED) {
-		defaultVariablesGain[0] = (DSPfract)atof(argv[4]); //sets variable gain L
-		defaultVariablesGain[1] = (DSPfract)atof(argv[5]); //sets variable gain R
-
+	if (argc == FULL_ARGS_PASSED) {
+		preGain = atof(argv[4]); //sets input Gain
 		enableFlag = atoi(argv[3]); //sets the enable flag
-		modeFlag = atoi(argv[6]);	//sets the mode
+		modeFlag = atoi(argv[5]);	//sets the mode
 	}
 
 	// Init channel buffers
@@ -238,7 +222,7 @@ int main(int argc, char* argv[])
 	// Open input and output wav files
 	//-------------------------------------------------
 	strcpy(WavInputName, argv[1]);
-	wav_in = OpenWavFileForRead(WavInputName, (char *) "rb");
+	wav_in = OpenWavFileForRead(WavInputName, (char*) "rb");
 	strcpy(WavOutputName, argv[2]);
 	wav_out = OpenWavFileForRead(WavOutputName, (char*) "wb");
 	//-------------------------------------------------
@@ -251,7 +235,9 @@ int main(int argc, char* argv[])
 	// Set up output WAV header
 	//-------------------------------------------------	
 	outputWAVhdr = inputWAVhdr;
-	outputWAVhdr.fmt.NumChannels = OUTPUT_NUM_CHANNELS; // change number of channels
+	if (enableFlag) {
+		outputWAVhdr.fmt.NumChannels = OUTPUT_NUM_CHANNELS;// change number of channels
+	}
 
 	int oneChannelSubChunk2Size = inputWAVhdr.data.SubChunk2Size / inputWAVhdr.fmt.NumChannels;
 	int oneChannelByteRate = inputWAVhdr.fmt.ByteRate / inputWAVhdr.fmt.NumChannels;
@@ -266,7 +252,7 @@ int main(int argc, char* argv[])
 	//-------------------------------------------------
 	WriteWavHeader(wav_out, outputWAVhdr);
 
-	initGainProcessing(defaultVariablesGain);
+	initGainProcessing(preGain);
 
 	// Processing loop
 	//-------------------------------------------------	

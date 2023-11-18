@@ -16,8 +16,9 @@
 #define INPUT_NUM_CHANNELS 2
 #define OUTPUT_NUM_CHANNELS 5
 
+
 // number of args
-#define FULL_ARGS_PASSED 7
+#define FULL_ARGS_PASSED 6
 
 // Channel IDs. 
 #define L_CH 0
@@ -27,7 +28,8 @@
 #define C_CH 4
 
 // Gain linear values. 
-#define MINUS_3DB 0.7071
+// default Input gain values. 
+#define MINUS_3DB FRACT_NUM(0.7071)
 
 // DEFAULT VALUES
 #define DEFAULTENABLE 1
