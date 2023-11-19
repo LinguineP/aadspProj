@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <stdfix.h>
+
 
 /* Basic constants */
 /* TO DO: Move defined constants here */
@@ -17,7 +17,7 @@
 
 
 // number of args
-#define FULL_ARGS_PASSED 5
+#define FULL_ARGS_PASSED 5 //arguments start from 0 and fuction call doesnt count
 
 // Channel IDs. 
 #define L_CH 0
@@ -52,6 +52,9 @@
 #define long_fract long fract
 
 #endif
+
+/////////////////////////////////////////////////////////////////////////////////
+
 
 /* DSP integer */
 typedef short DSPshort;

@@ -1,0 +1,181 @@
+
+_PROC_ASM
+
+	.if defined (_PROC_ASM)
+
+_INPUT_NUM_CHANNELS .equ 2
+_LEFT_CH .equ 0
+_RIGHT_CH .equ 1
+_CENTER_CH .equ 2
+_BLOCK_SIZE .equ 16
+
+	.public _gainProcessing
+	.extern _preGain
+	.extern _postGain
+	.extern _variablesGain
+	.extern _limiterThreshold
+	
+ 	.code_ovly 
+ 	
+ 	# prema CCC2 pozivnoj konvenciji: 
+ 	# i0 - parametar pokazivac, pIn
+ 	# i1 - parametar pokazivac, pOut
+_processing:
+
+	# Save index registers on stack
+	xmem[i7] = i2; i7 += 1;
+	xmem[i7] = i3; i7 += 1;
+	xmem[i7] = i6; i7 += 1;
+
+# 	__memY DSPfract* R_CH_In_Ptr = *(pIn + RIGHT_CH);
+	i2 = i0 + (_RIGHT_CH * _BLOCK_SIZE)
+
+# 	// output pointers
+# 	__memY DSPfract* R_CH_Out_Ptr = *(pOut + RIGHT_CH);
+	i3 = i1 + (_RIGHT_CH * _BLOCK_SIZE)
+# 	__memY DSPfract* C_CH_Out_Ptr = *(pOut + CENTER_CH);
+	i4 = i1 + (_CENTER_CH * _BLOCK_SIZE)
+
+# 	DSPint j;
+# 	DSPfract L_CH_fract;
+# 	DSPfract R_CH_fract;
+# 	DSPfract C_CH_fract;
+# 	DSPaccum L_CH_reScaled_sample;
+# 	DSPaccum R_CH_reScaled_sample;
+# 	DSPaccum C_Ch_out;
+# 	DSPaccum C_CH_reScaled_sample;
+# 
+# 
+# 	for (j = 0; j < BLOCK_SIZE; j++)
+# 	{
+	do(_BLOCK_SIZE),>loop
+		
+# 	// FIRST STAGE, apply constant pre-Gain
+
+# 	L_CH_fract = *L_CH_In_Ptr;
+# 	*L_CH_In_Ptr = L_CH_fract * preGain;
+	x0 = ymem[i0]; i0 += 1;
+	y0 = xmem[_preGain]
+	a0 = x0 * y0
+	
+
+# 	R_CH_fract = *R_CH_In_Ptr;
+# 	*R_CH_In_Ptr = R_CH_fract * preGain;
+	x1 = ymem[i2]; i2 += 1;
+	y1 = xmem[_preGain]
+	a1 = x1 * y1
+
+# 	// SECOND STAGE, apply variable gain
+
+# 	L_CH_fract = *L_CH_In_Ptr;
+# 	*L_CH_Out_Ptr = L_CH_fract * *(gains + LEFT_CH);
+	x0 = a0
+	y0 = xmem[_variablesGain + _LEFT_CH]	# load gain
+	a0 = x0 * y0
+
+# 	R_CH_fract = *R_CH_In_Ptr;
+# 	*R_CH_Out_Ptr = R_CH_fract * *(gains + RIGHT_CH);
+	x1 = a1
+	y1 = xmem[_variablesGain + _RIGHT_CH] # load gain
+	a1 = x1 * y1
+ 
+# 	// rescale L and R channels
+# 	L_CH_fract = *L_CH_Out_Ptr;
+# 	L_CH_reScaled_sample = L_CH_fract << 1;
+	a0 = a0 << 1
+
+# 	*L_CH_Out_Ptr = saturation(L_CH_reScaled_sample);
+	b0 = xmem[_limiterThreshold]
+	
+# if (in < limiterThreshold)
+	a0 - b0
+	if (a < 0) jmp>less
+		a0 = b0
+		jmp>endSaturation
+%less: 
+# if (in >= -limiterThreshold)
+	b0 = -b0
+	a0 - b0
+	if (a >= 0) jmp>endSaturation
+		a0 = b0
+		
+%endSaturation:
+
+# 	R_CH_fract = *R_CH_Out_Ptr;
+# 	R_CH_reScaled_sample = R_CH_fract << 1;
+	a1 = a1 << 1
+
+# 	*R_CH_Out_Ptr = saturation(R_CH_reScaled_sample);
+	b1 = xmem[_limiterThreshold]
+	a1 - b1
+	if (a < 0) jmp>less
+		a1 = b1
+		jmp>endSaturation
+%less: 
+	b1 = -b1
+	a1 - b1
+	if (a >= 0) jmp>endSaturation
+		a1 = b1
+%endSaturation:
+
+#	*L_CH_Out_Ptr = a0  -> write saturated value
+	ymem[i1] = a0; i1 += 1
+#	*R_CH_Out_Ptr = a1  -> write saturated value
+	ymem[i3] = a1; i3 += 1
+
+ 
+# 	// add processed sampled to the center output channel and scale by 4
+# 	C_Ch_out = (DSPaccum)L_CH_reScaled_sample + (DSPaccum)R_CH_reScaled_sample;
+	
+	a0 = a0 + a1
+	
+# 	*C_CH_Out_Ptr = (C_Ch_out) >> 2;
+	a0 = a0 >> 1
+	a0 = a0 >> 1
+# 
+# 	// apply center channel post-Gain and rescale by 4
+# 	C_CH_fract = *C_CH_Out_Ptr;
+	x0 = a0
+# 	*C_CH_Out_Ptr = C_CH_fract * postGain;
+	y0 = xmem[_postGain]
+	a0 = x0 * y0 
+
+# 
+# 	C_CH_fract = *C_CH_Out_Ptr;
+# 	C_CH_reScaled_sample = C_CH_fract << 2;
+	a0 = a0 << 1
+	a0 = a0 << 1
+	
+# 	*C_CH_Out_Ptr = saturation(C_CH_reScaled_sample);
+	b0 = xmem[_limiterThreshold]	# load threshold
+	
+# if (in < limiterThreshold)
+	a0 - b0
+	if (a < 0) jmp>less
+		a0 = b0
+		jmp>endSaturation
+%less: 
+# if (in >= -limiterThreshold)
+	b0 = -b0
+	a0 - b0
+	if (a >= 0) jmp>endSaturation
+		a0 = b0
+		
+%endSaturation:
+
+#	*C_CH_Out_Ptr = a0  -> center channel saturated value
+	ymem[i4] = a0; i4 += 1
+
+%loop: nop
+
+	# Pop index registers from stack
+	i7 -= 1;
+	nop
+	i6 = xmem[i7]; i7 -= 1;
+	i3 = xmem[i7]; i7 -= 1;
+	i2 = xmem[i7];
+	
+	ret
+	
+	.endif
+	

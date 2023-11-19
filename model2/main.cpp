@@ -75,7 +75,6 @@ DSPfract fir_basic(DSPfract input, DSPfract* coeffs, DSPfract* history)
 	for (i = 0; i < FILTER_LENGHT; i++)
 	{
 		multiplyResult = ((*coeffsPtr) * (*historyBufferPtr));
-		//multiplyResult = multiplyResult << 1;
 		ret_val += multiplyResult; //descrete convolution 
 		coeffsPtr++;
 		historyBufferPtr++;
@@ -118,14 +117,14 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 	for (DSPint j = 0; j < BLOCK_SIZE; j++)
 	{
 		//first stage, apply inputGain on L & R channels 
-		//*L_CH_Out_Ptr = saturation((*L_CH_Out_Ptr) * (*gains));
+		//*L_CH_Out_Ptr = saturation((*L_CH_Out_Ptr) * inputGain);
 		processed_L_CH = (DSPfract)(*L_CH_In_Ptr) * (DSPfract)(inputGain);
-		//processed_L_CH = processed_L_CH << 1;
+	
 		*L_CH_Out_Ptr = (DSPfract)saturation(processed_L_CH);
 		
-		//pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
+		//*R_CH_Out_Ptr = saturation((*R_CH_Out_Ptr) * inputGain);
 		processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(inputGain);
-		//processed_R_CH = processed_R_CH << 1;
+	
 		*R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
 		
 		//passing through processed L & R channels To Ls and Rs channels
@@ -138,12 +137,7 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 			*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
 		
 		}
-		/*else
-		{	// bypassing filtering
-			*L_CH_Out_Ptr = *L_CH_Out_Ptr;
-			*R_CH_Out_Ptr = *R_CH_Out_Ptr;
 
-		}*/
 		
 		processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
 		processed_R_CH = (DSPfract)*R_CH_Out_Ptr;
@@ -154,10 +148,6 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 		centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
 		*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
 
-		//*LS_CH_Out_Ptr=0.0;
-		//*RS_CH_Out_Ptr=0.0;
-		//*C_CH_Out_Ptr=0.0;
-		
 
 		L_CH_In_Ptr++;
 		R_CH_In_Ptr++;

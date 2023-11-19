@@ -1,0 +1,43 @@
+
+_PROC_ASM
+
+	.if defined (_PROC_ASM)
+
+
+_L_CH .equ 0
+_R_CH .equ 1
+_LS_CH .equ 0
+_RS_CH .equ 1
+_C_CH .equ 2
+_BLOCK_SIZE .equ 16
+
+	.public _processing
+	.extern _inputGain
+	.extern _limiterThreshold
+	.extern _saturation
+ 	.code_ovly 
+ 	
+ 	# prema CCC2 pozivnoj konvenciji: 
+ 	# i0 - parametar pokazivac, pIn
+ 	# i1 - parametar pokazivac, pOut
+_processing:
+
+	# Save index registers on stack
+	xmem[i7] = i2; i7 += 1;
+	xmem[i7] = i3; i7 += 1;
+	xmem[i7] = i6; i7 += 1;
+
+# 	__memY DSPfract* R_CH_In_Ptr = *(pIn + RIGHT_CH);
+	i2 = i0 + (_R_CH * _BLOCK_SIZE)
+
+# 	// output pointers
+# 	__memY DSPfract* R_CH_Out_Ptr = *(pOut + RIGHT_CH);
+	i3 = i1 + (_R_CH * _BLOCK_SIZE)
+# 	__memY DSPfract* C_CH_Out_Ptr = *(pOut + CENTER_CH);
+	i4 = i1 + (_C_CH * _BLOCK_SIZE)
+
+	
+	ret
+	
+	.endif
+	

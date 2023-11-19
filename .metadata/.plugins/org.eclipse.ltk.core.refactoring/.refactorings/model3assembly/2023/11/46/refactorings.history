@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;model3assembly/src/porcessing.a&apos; to &apos;processing.a&apos;" description="Rename resource &apos;porcessing.a&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/porcessing.a" name="processing.a" stamp="1700345174653" updateReferences="false"/>
+</session>

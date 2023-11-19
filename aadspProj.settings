@@ -6,26 +6,36 @@
 </clideView>
 <clideView viewId="clide.debug.ui.registersView">
 <registerView regViewCoreName="DSP_A">
-<regViewMementoCore scrollPercent="NaN">
+<regViewMementoCore scrollPercent="0.23684211" selectedItem="/DSP_A/Index registers/i2">
 <layoutType horizontal="0" register_details="1"/>
 <expandedPath item_0="DSP_A"/>
+<expandedPath item_0="DSP_A" item_1="Data registers"/>
+<expandedPath item_0="DSP_A" item_1="Accum registers"/>
+<expandedPath item_0="DSP_A" item_1="Index registers"/>
+<expandedPath item_0="DSP_A" item_1="Modulo registers"/>
+<expandedPath item_0="DSP_A" item_1="Control registers"/>
+<expandedPath item_0="DSP_A" item_1="Loop registers"/>
+<expandedPath item_0="DSP_A" item_1="Call registers"/>
+<expandedPath item_0="DSP_A" item_1="Rand registers"/>
+<expandedPath item_0="DSP_A" item_1="Page registers"/>
 </regViewMementoCore>
 </registerView>
 </clideView>
 </clideViews>
 <perspective id="CLIDE.DebugPerspective"/>
 <workbench_editors>
-<editor file_path="/model3/.suldproj"/>
-<editor file_path="/model3/src/main.cpp"/>
-<editor file_path="/model3/src/common.h"/>
-<editor file_path="/model3/src/FIRcoefs.h"/>
-<editor file_path="/model3/crystal32.groovy"/>
+<editor file_path="/model3a/src/main.cpp"/>
+<editor file_path="/model3a/.suldproj"/>
+<editor file_path="/model3a/src/proc.a"/>
+<editor file_path="/model3a/crystal32.groovy"/>
 </workbench_editors>
 <views/>
 <watchExpressions>
 <watchExpression enabled="1" text="inputGain"/>
 <watchExpression enabled="1" text="enableFlag"/>
 <watchExpression enabled="1" text="modeFlag"/>
+<watchExpression enabled="1" text="sampleBuffer"/>
+<watchExpression enabled="1" text="outChannels"/>
 </watchExpressions>
 <launcherConfiguration/>
 <launchHistory>

@@ -1,0 +1,326 @@
+
+#include <stdio.h>
+#include <dsplib\wavefile.h>
+#include <stdfix.h>
+#include <string.h>
+#include "common.h"
+#include "FIRcoefs.h"
+#include <ctype.h>
+
+#define BLOCK_SIZE 16
+#define MAX_NUM_CHANNEL 8
+
+
+// default Input gain values. 
+
+
+
+
+
+
+// IO Buffers
+__memY static DSPfract sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
+
+// User commands
+static DSPint enableFlag;
+static DSPint modeFlag;
+
+
+// Processing related variables
+__memY static DSPfract inputGain;
+static DSPfract limiterThreshold = FRACT_NUM(0.999);
+
+
+void initGainProcessing(DSPfract preGain)
+{
+	// initialises gains
+	DSPint i;
+	__memX DSPfract* lpfhistoryBuffPtr;
+	__memX DSPfract* hpfhistoryBuffPtr;
+	 inputGain = preGain;
+	 hpfhistoryBuffPtr = hpfHistoryBuffer;
+	 lpfhistoryBuffPtr = lpfHistoryBuffer;
+	for (i = 0; i < FILTER_LENGHT; i++)
+	{
+		*hpfhistoryBuffPtr = (DSPfract)0;
+		*lpfhistoryBuffPtr = (DSPfract)0;
+		hpfhistoryBuffPtr++;
+		lpfhistoryBuffPtr++;
+	}
+
+}
+
+DSPfract fir_basic( DSPfract input, __memY DSPfract* coeffs,  __memX DSPfract* history)
+{
+	DSPint i;
+	DSPfract ret_val = 0;
+	DSPaccum multiplyResult;
+
+	__memY DSPfract* coeffsPtr = coeffs;
+	//pointers to second to last and last array members
+	__memX DSPfract* historyBufferPtr = history+(FILTER_LENGHT-2);
+	__memX DSPfract* nexthistoryBufferPtr = history + (FILTER_LENGHT-1);
+
+	//shifting all values of the history buffer towards the end by one to make room for a new value	
+	for (i = FILTER_LENGHT - 2; i >= 0; i--)
+	{
+		*nexthistoryBufferPtr = *historyBufferPtr; //shift by one
+		historyBufferPtr--; // moving pointers towards the beggining
+		nexthistoryBufferPtr--;
+	}
+	
+	historyBufferPtr++; //ptr was pointing one place before the beggining setting it to point to beggining of the array
+	/* store input at the beginning of the delay line */
+	*historyBufferPtr = input; 
+
+	//initilising coeff pointer
+
+
+	/* calc FIR via convolution*/
+	for (i = 0; i < FILTER_LENGHT; i++)
+	{
+		multiplyResult = ((*coeffsPtr) * (*historyBufferPtr));
+		//multiplyResult = multiplyResult << 1;
+		ret_val += multiplyResult; //descrete convolution 
+		coeffsPtr++;
+		historyBufferPtr++;
+	}
+	return ret_val;
+}
+
+DSPfract saturation(DSPfract in)
+{
+	//a simple limiter in case a value goes out of range
+	if (in > limiterThreshold)
+	{
+		return  limiterThreshold;
+	}
+	else if (in < -limiterThreshold)
+	{
+		return  -limiterThreshold;
+	}
+
+	return in;
+}
+
+void processing(__memY DSPfract pIn[][BLOCK_SIZE], __memY DSPfract pOut[][BLOCK_SIZE])
+{
+	// input pointers
+	__memY DSPfract* L_CH_In_Ptr = *pIn;
+	__memY DSPfract* R_CH_In_Ptr = *(pIn + R_CH);
+
+	// output pointers
+	__memY DSPfract* L_CH_Out_Ptr = *pOut;
+	__memY DSPfract* R_CH_Out_Ptr = *(pOut + R_CH);
+	__memY DSPfract* C_CH_Out_Ptr = *(pOut + C_CH);
+	__memY DSPfract* RS_CH_Out_Ptr = *(pOut + RS_CH);
+	__memY DSPfract* LS_CH_Out_Ptr = *(pOut + LS_CH);
+	DSPaccum processed_L_CH=0.0;
+	DSPaccum processed_R_CH=0.0;
+	DSPaccum centerSum=0.0;
+	DSPint j;
+
+	for ( j = 0; j < BLOCK_SIZE; j++)
+	{
+		//first stage, apply inputGain on L & R channels 
+		//*L_CH_Out_Ptr = saturation((*L_CH_Out_Ptr) * (*gains));
+		processed_L_CH = (DSPfract)(*L_CH_In_Ptr) * (DSPfract)(inputGain);
+		//processed_L_CH = processed_L_CH << 1;
+		*L_CH_Out_Ptr = (DSPfract)saturation(processed_L_CH);
+		
+		//pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
+		processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(inputGain);
+		//processed_R_CH = processed_R_CH << 1;
+		*R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
+		
+		//passing through processed L & R channels To Ls and Rs channels
+		*LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
+		*RS_CH_Out_Ptr = (DSPfract)processed_R_CH;
+	
+		if (modeFlag) 
+		{	//doing fir filtering on L&R channels
+			*L_CH_Out_Ptr = fir_basic(*L_CH_Out_Ptr,hpfCoefs, hpfHistoryBuffer);
+			*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
+		
+		}
+		/*else
+		{	// bypassing filtering
+			*L_CH_Out_Ptr = *L_CH_Out_Ptr;
+			*R_CH_Out_Ptr = *R_CH_Out_Ptr;
+
+		}*/
+		
+		processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+		processed_R_CH = (DSPfract)*R_CH_Out_Ptr;
+		
+
+
+		// generate C_CH as a sum of L & R output channels
+		centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
+		*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
+
+		//*LS_CH_Out_Ptr=0.0;
+		//*RS_CH_Out_Ptr=0.0;
+		//*C_CH_Out_Ptr=0.0;
+		
+
+		L_CH_In_Ptr++;
+		R_CH_In_Ptr++;
+		//move through a buffer
+		L_CH_Out_Ptr++;
+		R_CH_Out_Ptr++;
+		LS_CH_Out_Ptr++;
+		RS_CH_Out_Ptr++;
+		C_CH_Out_Ptr++;
+		
+	}
+}
+
+	
+
+
+
+	
+/////////////////////////////////////////////////////////////////////////////////
+/// MODEL0
+/////////////////////////////////////////////////////////////////////////////////
+// @Author	<Pavle Vasiljevic RA207/2020>
+//
+// Function:
+// main
+//
+// @param - argv[0] - Input file name
+//        - argv[1] - Output file name
+//		  - argv[2] - enable on off (0 or 1) default on
+//		  - argv[3] - g1 gain for the left channel default -3db (value [0,2])
+//		  - argv[4] - mode (0 or 1) default 0
+// @return - nothing
+// Comment: main routine of a program
+//
+// E-mail:	<email>
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+
+int main(int argc, char *argv[])
+ {
+    WAVREAD_HANDLE *wav_in;
+    WAVWRITE_HANDLE *wav_out;
+
+	char WavInputName[256];
+	char WavOutputName[256];
+
+	int i;
+	int j;
+
+    DSPint inChannels;
+    DSPint outChannels;
+    DSPint bitsPerSample;
+    DSPint sampleRate;
+    DSPint iNumSamples;
+
+    DSPfract preGain = MINUS_3DB; // -3dB
+    enableFlag = DEFAULTENABLE;
+    modeFlag = DEFAULTMODE;
+
+    if (argc == FULL_ARGS_PASSED) {
+    	if(!(strcmp(argv[3],"-0.999")))
+    		preGain=FRACT_NUM(-0.999);
+    	else if(!(strcmp(argv[3],"0.999")))
+    		preGain=FRACT_NUM(0.999);
+    	if(!(strcmp(argv[2],"1")))
+    		enableFlag = 1; //sets the enable flag
+    	else
+    		enableFlag = 0; //sets the enable flag
+    	if(!(strcmp(argv[4],"1")))
+    		modeFlag = 1;	//sets the mode
+    	else
+    		modeFlag = 0;	//sets the mode
+    }
+
+	// Init channel buffers
+	for(i=0; i<MAX_NUM_CHANNEL; i++)
+		for(j=0; j<BLOCK_SIZE; j++)
+			sampleBuffer[i][j] = FRACT_NUM(0.0);
+
+	// Open input wav file
+	//-------------------------------------------------
+	strcpy(WavInputName,argv[0]);
+	wav_in = cl_wavread_open(WavInputName);
+	 if(wav_in == NULL)
+    {
+        printf("Error: Could not open wavefile.\n");
+        return -1;
+    }
+	//-------------------------------------------------
+
+	// Read input wav header
+	//-------------------------------------------------
+	inChannels = cl_wavread_getnchannels(wav_in);
+    bitsPerSample = cl_wavread_bits_per_sample(wav_in);
+    sampleRate = cl_wavread_frame_rate(wav_in);
+    iNumSamples =  cl_wavread_number_of_frames(wav_in);
+	//-------------------------------------------------
+
+	// Open output wav file
+	//-------------------------------------------------
+	strcpy(WavOutputName,argv[1]);
+	outChannels = inChannels;
+	if(enableFlag){
+		outChannels = OUTPUT_NUM_CHANNELS;
+	}
+
+	wav_out = cl_wavwrite_open(WavOutputName, bitsPerSample, outChannels, sampleRate);
+	if(!wav_out)
+    {
+        printf("Error: Could not open wavefile.\n");
+        return -1;
+    }
+	//-------------------------------------------------
+
+
+	initGainProcessing(preGain);
+	// Processing loop
+	//-------------------------------------------------
+    {
+
+		int k;
+		int sample;
+
+		// exact file length should be handled correctly...
+		for(i=0; i<iNumSamples/BLOCK_SIZE; i++)
+		{
+			for(j=0; j<BLOCK_SIZE; j++)
+			{
+				for(k=0; k<inChannels; k++)
+				{
+					sample = cl_wavread_recvsample(wav_in);
+        			sampleBuffer[k][j] = rbits(sample);
+				}
+			}
+
+			// pozvati processing funkciju ovde
+			if(enableFlag)
+			{
+				processing(sampleBuffer, sampleBuffer);
+			}
+
+			for(j=0; j<BLOCK_SIZE; j++)
+			{
+				for(k=0; k<outChannels; k++)
+				{
+					sample = bitsr(sampleBuffer[k][j]);
+					cl_wavwrite_sendsample(wav_out, sample);
+				}
+			}
+		}
+	}
+
+	// Close files
+	//-------------------------------------------------
+    cl_wavread_close(wav_in);
+    cl_wavwrite_close(wav_out);
+	//-------------------------------------------------
+
+    return 0;
+ }

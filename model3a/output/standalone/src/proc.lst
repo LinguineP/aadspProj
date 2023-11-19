@@ -1,0 +1,348 @@
+1     	 0000				_PROC_ASM
+2     						
+3     							.if defined (_PROC_ASM)
+4     						
+5     						
+6     	 0000				_L_CH .equ 0
+7     	 0001				_R_CH .equ 1
+8     	 0002				_LS_CH .equ 2
+9     	 0003				_RS_CH .equ 3
+10    	 0004				_C_CH .equ 4
+11    	 0010				_BLOCK_SIZE .equ 16
+12    	 0017				_FILTER_LENGHT .equ 23
+13    						
+14    	 0000					.public _processing
+15    	 0000					.extern _inputGain
+16    	 0000					.extern _limiterThreshold
+17    	 0000					.extern _saturation
+18    	 0000					.extern _modeFlag
+19    	 0000					.extern _hpfCoefs
+20    	 0000					.extern _lpfCoefs
+21    	 0000					.extern _lpfHistoryBuffer
+22    	 0000					.extern _hpfHistoryBuffer
+23    							
+24    						 	.code_ovly 
+24     >> start of macro: .code_ovly
+1+    									seg_single , "CODE_OVLY", CODE
+1+     >> start of macro: seg_single
+1+    						  .if ( "" != "" ) & defined( ___SegStart_CODE_ )
+2+    						    segment
+3+    						  .else
+4+    						    segment "CODE_OVLY"
+5+    							.if "" != ""
+6+    						___SegStart_CODE_
+7+    							.endif
+8+    						  .endif
+9+    							#RememberSegmentType
+10+    >> end of macro: seg_single
+2+     >> end of macro: .code_ovly
+25    						 	
+26    						 	# prema CCC2 pozivnoj konvenciji: 
+27    						 	# i0 - parametar pokazivac, pIn
+28    						 	# i1 - parametar pokazivac, pOut
+29    	 0000				_processing:
+30    						
+31    							# Save index registers on stack
+32    	 0000	 B2540017		xmem[i7] = i2; i7 += 1;
+33    	 0001	 B3540017		xmem[i7] = i3; i7 += 1;
+34    	 0002	 B8540017		xmem[i7] = i4; i7 += 1;
+35    	 0003	 B9540017		xmem[i7] = i5; i7 += 1;
+36    	 0004	 BA540017		xmem[i7] = i6; i7 += 1;
+37    							#save accums to the stack
+38    	 0005	 8A540017		xmem[i7] = a2; i7 += 1;
+39    	 0006	 8E540017		xmem[i7] = b2; i7 += 1;
+40    						
+41    						//    input pointers
+42    						#	__memY DSPfract* L_CH_In_Ptr = *pIn; //already in i0
+43    						# 	__memY DSPfract* R_CH_In_Ptr = *(pIn + R_CH);
+44    	 0007	 82050010		i2 = i0 + (_R_CH * _BLOCK_SIZE)   
+45    						// output pointers
+46    						#	__memY DSPfract* L_CH_Out_Ptr = *pOut; already in i1
+47    						#	__memY DSPfract* R_CH_Out_Ptr = *(pOut + R_CH);
+48    	 0008	 83150010		i3 = i1 + (_R_CH * _BLOCK_SIZE)	
+49    						#	__memY DSPfract* RS_CH_Out_Ptr = *(pOut + RS_CH);
+50    	 0009	 84150030		i4 = i1 + (_RS_CH * _BLOCK_SIZE)
+51    						#	__memY DSPfract* LS_CH_Out_Ptr = *(pOut + LS_CH);
+52    	 000A	 85150020		i5 = i1 + (_LS_CH * _BLOCK_SIZE)
+53    						# 	__memY DSPfract* C_CH_Out_Ptr = *(pOut + C_CH);
+54    	 000B	 86150040		i6 = i1 + (_C_CH * _BLOCK_SIZE)
+55    						
+56    						
+57    						#index register mapping:
+58    						# i0=L_CH_In_Ptr
+59    						# i2=R_CH_In_Ptr
+60    						# i1=L_CH_Out_Ptr
+61    						# i3=R_CH_Out_Ptr
+62    						# i4=LS_CH_Out_Ptr 
+63    						# i5=RS_CH_Out_Ptr
+64    						# i6=C_CH_Out_Ptr
+65    						#i7	STACK BOUND
+66    						#i8 TMP
+67    						
+68    						#	DSPaccum processed_L_CH=0.0;a2 // these will be replaced by registers a2 & b2
+69    						#	DSPaccum processed_R_CH=0.0;b2
+70    						#	DSPaccum centerSum=0.0;
+71    						#  DSPint j;  //will be replaced with a hw loop  along with the for
+72    						
+73    						#	for ( j = 0; j < BLOCK_SIZE; j++)
+74    							#{
+75    						##################################################################
+76    						//processing loop
+77    						#################################################################
+78    								
+79    	 000C	 81000037		do(_BLOCK_SIZE),>loop
+80    								#######################################################
+81    								//first stage, apply inputGain on L & R channels 
+82    								######################################################
+83    								
+84    								//L_CH
+85    								# processed_L_CH = (DSPfract)(*L_CH_In_Ptr) * (DSPfract)(inputGain);
+86    								# *L_CH_Out_Ptr = (DSPfract)saturation(processed_L_CH);
+87    								#L_CH_In_Ptr++;
+88    	 000D	 84940010			y0 = ymem[i0]; i0 += 1  // loads the sample value and moves input  pointer through the block
+89    	 000E	 80040000			x0 = xmem[_inputGain]   //loads inputGain
+90    	 000F	 00002400			a0 = x0 * y0 //applies gain output of L_Ch of this phase is in a0
+91    								
+92    							
+93    								
+94    								//R_CH
+95    								#pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
+96    								# processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(inputGain);
+97    								# *R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
+98    								#R_CH_In_Ptr++;
+99    	 0010	 85940012			y1 = ymem[i2]; i2 += 1  // loads the sample value and moves input pointer through the block
+100   								//inputGain same for both
+101   	 0011	 00002421			a1 = y1 * x0 //applies gain output of R_Ch of this phase is in a1
+102   								
+103   								
+104   								
+105   								
+106   								##################################################################
+107   								//passing through processed L & R channels To Ls and Rs channels
+108   								##################################################################
+109   								
+110   								//L_CH
+111   								# *LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
+112   	 0012	 88D40004			ymem[i4]=a0; //writes corrected volumes of L_CH To LS_CH
+113   								
+114   								//R_CH
+115   								# *RS_CH_Out_Ptr = (DSPfract)processed_R_CH;
+116   	 0013	 89D40005			ymem[i5]=a1;//writes corrected volumes of R_CH To RS_CH
+117   							
+118   							
+119   							
+120   								########################################################
+121   								//mode 0 1 dependent processing
+122   								########################################################
+123   								
+124   								//mode0
+125   	 0014	 88D40001			ymem[i1]=a0 //writing into l & r output buffers 
+126   	 0015	 89D40003			ymem[i3]=a1 
+127   								#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+128   	 0016	 484A7FFF			a2=a0 //saving a0 for further use
+129   								#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
+130   	 0017	 494E7FFF			b2=a1 //saving a0 for further use
+131   								// fir filtering part
+132   								# if (modeFlag)  //mode check logic
+133   	 0018	 00004D56			b2=b2^b2 //puts  0 into b2
+134   	 0019	 8A040000			a2=xmem[_modeFlag]
+135   	 001A	 00004F36			b2-a2
+136   	 001B	 8608002E			if(b==0) jmp>mode0
+137   								
+138   								//mode 1 processing
+139   								#	{	//doing fir filtering on L&R channels
+140   								
+141   								//L_CH
+142   	 001C	 B0540017			xmem[i7] = i0; i7 += 1; //saving i0 and i1 registers with pointers to the L_Ch_in and L_Ch_out so they can be used for a function call
+143   	 001D	 B1540017			xmem[i7] = i1; i7 += 1; 
+144   								//prepping arguments for L_CH
+145   								//right value is already in a0
+146   	 001E	 B04A0000			i0=(_hpfCoefs)
+147   	 001F	 B14A0000			i1=(_hpfHistoryBuffer)
+148   								// we are calling this function fir_basic( DSPfract input(in a0), __memY DSPfract* coeffs(in i0),  __memX DSPfract* history(in i1))
+149   								//this call 
+150   								#  	*L_CH_Out_Ptr = fir_basic(*L_CH_Out_Ptr,hpfCoefs, hpfHistoryBuffer);
+151   	 0020	 80880040			call _fir_basic
+152   	 0021	 B1140027			i1=xmem[i7]; i7 -= 1;
+153   	 0022	 00007FFF			nop
+154   	 0023	 88D40001			ymem[i1]=a0;//saving the result into output buffer for L_CH
+155   	 0024	 B1540017			xmem[i7] = i1; i7 += 1; 
+156   								#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+157   	 0025	 484A7FFF			a2=a0;//saving result of this phase for next phase
+158   								//prepping arguments for R_CH
+159   								
+160   								//R_CH
+161   	 0026	 49487FFF			a0=a1 //putting the R_Ch value into a0
+162   	 0027	 B04A0000			i0=(_lpfCoefs)
+163   	 0028	 B14A0000			i1=(_lpfHistoryBuffer)
+164   								//this call
+165   								#  	*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
+166   	 0029	 80880040			call _fir_basic
+167   	 002A	 88D40003			ymem[i3]=a0;//saving the result into output buffer
+168   								#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
+169   	 002B	 484E7FFF			b2=a0 ////saving result of this phase for next phase
+170   								
+171   								
+172   								//restoring values from the stack
+173   	 002C	 B1140027			i1=xmem[i7]; i7 -= 1;
+174   	 002D	 B0140027			i0=xmem[i7]; i7 -= 1;
+175   	 002E				%mode0:
+176   								
+177   								// generate C_CH as a sum of L & R output channels
+178   								#centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
+179   								#*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
+180   								//a0 no longer in use so can be used for centerSum variable
+181   	 002E	 000044B0			a0=a1+b2
+182   	 002F	 00007FFF			nop
+183   	 0030	 00007FFF			nop
+184   	 0031	 88D40006			ymem[i6]=a0
+185   								
+186   								
+187   								
+188   						
+189   								//move through a buffer
+190   								#L_CH_Out_Ptr++;
+191   								#R_CH_Out_Ptr++;
+192   								#LS_CH_Out_Ptr++;
+193   								#RS_CH_Out_Ptr++;
+194   								#C_CH_Out_Ptr++;
+195   	 0032	 02097FFF			i1+=1
+196   	 0033	 020B7FFF			i3+=1
+197   	 0034	 020C7FFF			i4+=1
+198   	 0035	 020D7FFF			i5+=1
+199   	 0036	 020E7FFF			i6+=1
+200   								
+201   						
+202   						
+203   	 0037	 00007FFF	%loop: nop
+204   						
+205   	 0038				_end_processing:
+206   						//stack restoring
+207   						
+208   							#return accums to prev state
+209   	 0038	 8E140027		b2=xmem[i7] ; i7 -= 1;
+210   	 0039	 8A140027		a2=xmem[i7] ; i7 -= 1;
+211   							# return index regs to prev stat
+212   	 003A	 BA140027		i6=xmem[i7]; i7 -= 1;
+213   	 003B	 B9140027		i5=xmem[i7]; i7 -= 1;
+214   	 003C	 B8140027		i4=xmem[i7]; i7 -= 1;
+215   	 003D	 B3140027		i3=xmem[i7] ; i7 -= 1;
+216   	 003E	 B2140027		i2=xmem[i7] ; i7 -= 1;
+217   							
+218   	 003F	 81880000		ret
+219   						############################################################
+220   						############################################################
+221   						//fir filter 	
+222   						############################################################	
+223   	 0040				_fir_basic:
+224   							//DSPint i;
+225   							//DSPfract ret_val = 0;
+226   							//input is in a0
+227   							#save registers to stack
+228   	 0040	 B3540017		xmem[i7] = i3; i7 += 1;
+229   							#save accums to the stack
+230   	 0041	 8A540017		xmem[i7] = a2; i7 += 1;
+231   						
+232   							
+233   							
+234   							//pointers to second to last and last array members
+235   							#DSPfract* historyBufferPtr = history+(FILTER_LENGHT-2);
+236   	 0042	 81150015		i1 = i1+((_FILTER_LENGHT)-2);
+237   							#DSPfract* nexthistoryBufferPtr = history + (FILTER_LENGHT-1);
+238   	 0043	 83150016		i3 = i1 + ((_FILTER_LENGHT)-1);
+239   						
+240   							//shifting all values of the history buffer towards the end by one to make room for a new value	
+241   							#for (i = FILTER_LENGHT - 2; i >= 0; i--)
+242   							#{
+243   	 0044	 81700049		do(_FILTER_LENGHT),>loop
+244   							
+245   							#*nexthistoryBufferPtr = *historyBufferPtr; //shift by one
+246   	 0045	 8A140001		a2=xmem[i1]
+247   	 0046	 8A540003		xmem[i3]=a2
+248   	 0047	 02117FFF		i1-=1; // moving pointers towards the beggining
+249   							#nexthistoryBufferPtr--;
+250   	 0048	 02137FFF		i3-=1;
+251   	 0049	 00007FFF	%loop:nop
+252   						
+253   							#historyBufferPtr++; //ptr was pointing one place before the beggining setting it to point to beggining of the array
+254   	 004A	 02097FFF		i1+=1; 
+255   							/* store input at the beginning of the delay line */
+256   							#*historyBufferPtr = input; 
+257   	 004B	 88540001		xmem[i1]=a0
+258   							
+259   							//initilising coeff pointer
+260   							#DSPfract* coeffsPtr = coeffs; 
+261   							//already in a2
+262   							
+263   							/* calc FIR via convolution*/
+264   							#for (i = 0; i < FILTER_LENGHT; i++)
+265   							#{
+266   							#	multiplyResult = ((*coeffsPtr) * (*historyBufferPtr));
+267   							#	ret_val += multiplyResult; //descrete convolution 
+268   							#	coeffsPtr++;
+269   							#	historyBufferPtr++;
+270   							#}
+271   	 004C	 00004D40		a0=a0^a0//initialising accum to 0
+272   	 004D	 81700053		do(_FILTER_LENGHT),>loop
+273   	 004E	 80140001		x0=xmem[i1]
+274   	 004F	 84940000		y0=ymem[i0]
+275   	 0050	 00002408		a0+=x0*y0
+276   	 0051	 02097FFF		i1+=1
+277   	 0052	 02087FFF		i0+=1
+278   	 0053	 00007FFF	%loop:nop
+279   							
+280   							
+281   							#return ret_val;
+282   						
+283   	 0054				_end_fir_basic:
+284   							#return accums to prev state
+285   	 0054	 8A140027		a2=xmem[i7] ; i7 -= 1;
+286   							# return index regs to prev stat
+287   	 0055	 B3140027		i3=xmem[i7] ; i7 -= 1;
+288   	 0056	 81880000		ret
+289   						
+290   							.endif
+291   							
+				 SYMBOL TABLE 
+
+    Name                                                                                    Type                  Value 
+
+_BLOCK_SIZE                                                                     					 Number				          16 (10H)
+_COMMON_INC_PATH_                                                               					 Define                 "C:/CirrusDSP/crystal32/common/inc/"
+_C_CH                                                                           					 Number				          4 (4H)
+_DSP_                                                                           					 Define                 "a"
+_FILTER_LENGHT                                                                  					 Number				          23 (17H)
+_LOCAL_INC_PATH_                                                                					 Define                 "inc/"
+_LOCAL_SRC_PATH_                                                                					 Define                 "src/"
+_LS_CH                                                                          					 Number				          2 (2H)
+_L_CH                                                                           			  Unused Number				     0 (0H)
+_MUI_VERSION_                                                                   					 Define                 "020000"
+_OVLY_                                                                          					 Define                 "standalone"
+_OVLY_REVISION_                                                                 					 Define                 "020000"
+_PROC_ASM                                                                       			  Unused Relocatable        __INIT:0000H
+_ROUTER_INC_PATH_                                                               					 Define                 "rom_inc/"
+_RS_CH                                                                          					 Number				          3 (3H)
+_R_CH                                                                           					 Number				          1 (1H)
+_SLOT_                                                                          					 Define                 "0"
+_TARGET_FAMILY_                                                                 					 Define                 "crystal32"
+_TOOLS_VERSION_                                                                 					 Define                 "0x0701"
+_VERSION_                                                                       					 Define                 "00"
+__CASM_VER__                                                                    			  Unused Variable		        0 (701H)
+_end_fir_basic                                                                  			  Unused Relocatable        proc_GEN_0000:0054H
+_end_processing                                                                 			  Unused Relocatable        proc_GEN_0000:0038H
+_fir_basic                                                                      			         Relocatable         proc_GEN_0000:0040H
+_hpfCoefs                                                                       					 External   
+_hpfHistoryBuffer                                                               					 External   
+_inputGain                                                                      					 External   
+_limiterThreshold                                                               					 External   
+_lpfCoefs                                                                       					 External   
+_lpfHistoryBuffer                                                               					 External   
+_modeFlag                                                                       					 External   
+_processing                                                                     			  Public Relocatable       proc_GEN_0000:0000H
+_saturation                                                                     					 External   
+
+	       SEGMENTS:
+
+Size			  Name										 Class
+0000H	 __INIT                                  			 CODE                                    
+0057H	 proc_GEN_0000                           			 CODE_OVLY                               

@@ -7,6 +7,7 @@
 #include "FIRcoefs.h"
 #include <ctype.h>
 
+
 #define BLOCK_SIZE 16
 #define MAX_NUM_CHANNEL 8
 
@@ -19,27 +20,27 @@
 
 
 // IO Buffers
-static DSPfract sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
+__memY  DSPfract sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
 
 // User commands
-static DSPint enableFlag;
-static DSPint modeFlag;
+DSPint enableFlag;
+DSPint modeFlag;
 
 
 // Processing related variables
-static DSPfract inputGain;
-static DSPfract limiterThreshold = FRACT_NUM(0.999);
+DSPfract inputGain;
+DSPfract limiterThreshold = FRACT_NUM(0.999);
 
 
 void initGainProcessing(DSPfract preGain)
 {
 	// initialises gains
 	DSPint i;
-	DSPfract* lpfhistoryBuffPtr;
-	DSPfract* hpfhistoryBuffPtr;
-	inputGain = preGain;
-	hpfhistoryBuffPtr = hpfHistoryBuffer;
-	lpfhistoryBuffPtr = lpfHistoryBuffer;
+	__memX DSPfract* lpfhistoryBuffPtr;
+	__memX DSPfract* hpfhistoryBuffPtr;
+	 inputGain = preGain;
+	 hpfhistoryBuffPtr = hpfHistoryBuffer;
+	 lpfhistoryBuffPtr = lpfHistoryBuffer;
 	for (i = 0; i < FILTER_LENGHT; i++)
 	{
 		*hpfhistoryBuffPtr = (DSPfract)0;
@@ -50,16 +51,16 @@ void initGainProcessing(DSPfract preGain)
 
 }
 
-DSPfract fir_basic(DSPfract input, DSPfract* coeffs, DSPfract* history)
+DSPfract fir_basic( DSPfract input, __memY DSPfract* coeffs,  __memX DSPfract* history)
 {
 	DSPint i;
 	DSPfract ret_val = 0;
 	DSPaccum multiplyResult;
 
-	DSPfract* coeffsPtr = coeffs;
+	__memY DSPfract* coeffsPtr = coeffs;
 	//pointers to second to last and last array members
-	DSPfract* historyBufferPtr = history+(FILTER_LENGHT-2);
-	DSPfract* nexthistoryBufferPtr = history + (FILTER_LENGHT-1);
+	__memX DSPfract* historyBufferPtr = history+(FILTER_LENGHT-2);
+	__memX DSPfract* nexthistoryBufferPtr = history + (FILTER_LENGHT-1);
 
 	//shifting all values of the history buffer towards the end by one to make room for a new value	
 	for (i = FILTER_LENGHT - 2; i >= 0; i--)
@@ -103,18 +104,19 @@ DSPfract saturation(DSPfract in)
 	return in;
 }
 
-void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
+
+void processing(__memY DSPfract pIn[][BLOCK_SIZE], __memY DSPfract pOut[][BLOCK_SIZE])
 {
 	// input pointers
-	DSPfract* L_CH_In_Ptr = *pIn;
-	DSPfract* R_CH_In_Ptr = *(pIn + R_CH);
+	__memY DSPfract* L_CH_In_Ptr = *pIn;
+	__memY DSPfract* R_CH_In_Ptr = *(pIn + R_CH);
 
 	// output pointers
-	DSPfract* L_CH_Out_Ptr = *pOut;
-	DSPfract* R_CH_Out_Ptr = *(pOut + R_CH);
-	DSPfract* C_CH_Out_Ptr = *(pOut + C_CH);
-	DSPfract* RS_CH_Out_Ptr = *(pOut + RS_CH);
-	DSPfract* LS_CH_Out_Ptr = *(pOut + LS_CH);
+	__memY DSPfract* L_CH_Out_Ptr = *pOut;
+	__memY DSPfract* R_CH_Out_Ptr = *(pOut + R_CH);
+	__memY DSPfract* C_CH_Out_Ptr = *(pOut + C_CH);
+	__memY DSPfract* RS_CH_Out_Ptr = *(pOut + RS_CH);
+	__memY DSPfract* LS_CH_Out_Ptr = *(pOut + LS_CH);
 	DSPaccum processed_L_CH=0.0;
 	DSPaccum processed_R_CH=0.0;
 	DSPaccum centerSum=0.0;
@@ -176,7 +178,7 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 	}
 }
 
-	
+
 
 
 
@@ -200,7 +202,7 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 // E-mail:	<email>
 //
 /////////////////////////////////////////////////////////////////////////////////
-static DSPfract sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
+
 
 int main(int argc, char *argv[])
  {
