@@ -27,7 +27,7 @@ __memX DSPint modeFlag;
 
 // Processing related variables
 __memX DSPfract inputGain;
-static DSPfract limiterThreshold = FRACT_NUM(0.999);
+DSPfract limiterThreshold = FRACT_NUM(0.999);
 
 
 void initGainProcessing(DSPfract preGain)
@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
 			{
 
 				processing(sampleBuffer, sampleBuffer);
-				outChannels = OUTPUT_NUM_CHANNELS;
+				//outChannels = OUTPUT_NUM_CHANNELS;
 			}
 
 

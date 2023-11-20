@@ -1,0 +1,346 @@
+_PROC_ASM
+
+	.if defined (_PROC_ASM)
+
+
+_L_CH .equ 0
+_R_CH .equ 1
+_LS_CH .equ 2
+_RS_CH .equ 3
+_C_CH .equ 4
+_BLOCK_SIZE .equ 16
+_FILTER_LENGHT .equ 23
+
+	.public _processing
+	.extern _inputGain
+	.extern _limiterThreshold
+	.extern _saturation
+	.extern _modeFlag
+	.extern _hpfCoefs
+	.extern _lpfCoefs
+	.extern _lpfHistoryBuffer
+	.extern _hpfHistoryBuffer
+	
+ 	.code_ovly 
+ 	
+ 	# prema CCC2 pozivnoj konvenciji: 
+ 	# i0 - parametar pokazivac, pIn
+ 	# i1 - parametar pokazivac, pOut
+_processing:
+
+	# Save index registers on stack
+	xmem[i7] = i2; i7 += 1;
+	xmem[i7] = i3; i7 += 1;
+	xmem[i7] = i4; i7 += 1;
+	xmem[i7] = i5; i7 += 1;
+	xmem[i7] = i6; i7 += 1;
+	#save accums to the stack
+	xmem[i7] = a2; i7 += 1;
+	xmem[i7] = b2; i7 += 1;
+
+//    input pointers
+#	__memY DSPfract* L_CH_In_Ptr = *pIn; //already in i0
+# 	__memY DSPfract* R_CH_In_Ptr = *(pIn + R_CH);
+	i2 = i0 + (_R_CH * _BLOCK_SIZE)   
+// output pointers
+#	__memY DSPfract* L_CH_Out_Ptr = *pOut; already in i1
+#	__memY DSPfract* R_CH_Out_Ptr = *(pOut + R_CH);
+	i3 = i1 + (_R_CH * _BLOCK_SIZE)	
+#	__memY DSPfract* RS_CH_Out_Ptr = *(pOut + RS_CH);
+	i4 = i1 + (_LS_CH * _BLOCK_SIZE)
+#	__memY DSPfract* LS_CH_Out_Ptr = *(pOut + LS_CH);
+	i5 = i1 + (_RS_CH * _BLOCK_SIZE)
+# 	__memY DSPfract* C_CH_Out_Ptr = *(pOut + C_CH);
+	i6 = i1 + (_C_CH * _BLOCK_SIZE)
+
+
+#index register mapping:
+# i0=L_CH_In_Ptr
+# i2=R_CH_In_Ptr
+# i1=L_CH_Out_Ptr
+# i3=R_CH_Out_Ptr
+# i4=LS_CH_Out_Ptr 
+# i5=RS_CH_Out_Ptr
+# i6=C_CH_Out_Ptr
+#i7	STACK BOUND
+#i8 TMP
+
+#	DSPaccum processed_L_CH=0.0;a2 // these will be replaced by registers a2 & b2
+#	DSPaccum processed_R_CH=0.0;b2
+#	DSPaccum centerSum=0.0;
+#  DSPint j;  //will be replaced with a hw loop  along with the for
+
+#	for ( j = 0; j < BLOCK_SIZE; j++)
+	#{
+##################################################################
+//processing loop
+#################################################################
+		
+	do(_BLOCK_SIZE),>loop
+		#######################################################
+		//first stage, apply inputGain on L & R channels 
+		######################################################
+		
+		//L_CH
+		# processed_L_CH = (DSPfract)(*L_CH_In_Ptr) * (DSPfract)(inputGain);
+		# *L_CH_Out_Ptr = (DSPfract)saturation(processed_L_CH);
+		#L_CH_In_Ptr++;
+		y0 = ymem[i0]; i0 += 1  // loads the sample value and moves input  pointer through the block
+		x0 = xmem[_inputGain]   //loads inputGain
+		a0 = x0 * y0 //applies gain output of L_Ch of this phase is in a0
+		b0 = xmem[_limiterThreshold]
+	# if (in < limiterThreshold)
+		a0 - b0
+		if (a < 0) jmp>less
+			a0 = b0
+			jmp>endSaturation
+%less: 
+	# if (in >= -limiterThreshold)
+		b0 = -b0
+		a0 - b0
+		if (a >= 0) jmp>endSaturation
+			a0 = b0	
+%endSaturation:
+		//L_CH
+		# *LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
+		ymem[i4]=a0; //writes corrected volumes of L_CH To LS_CH
+		
+		
+		//R_CH
+		#pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
+		# processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(inputGain);
+		# *R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
+		#R_CH_In_Ptr++;
+		y1 = ymem[i2]; i2 += 1  // loads the sample value and moves input pointer through the block
+		//inputGain same for both
+		a1 = y1 * x0 //applies gain output of R_Ch of this phase is in a1
+		b1 = xmem[_limiterThreshold]
+		# if (in < limiterThreshold)
+		a1 - b1
+		if (a < 0) jmp>less
+			a1 = b1
+			jmp>endSaturation
+%less: 
+	# if (in >= -limiterThreshold)
+		b1 = -b1
+		a1 - b1
+		if (a >= 0) jmp>endSaturation
+			a1 = b1	
+%endSaturation:
+		
+		
+		
+		##################################################################
+		//passing through processed L & R channels To Ls and Rs channels
+		##################################################################
+		
+	
+		//R_CH
+		# *RS_CH_Out_Ptr = (DSPfract)processed_R_CH;
+		ymem[i5]=a1;//writes corrected volumes of R_CH To RS_CH
+	
+	
+	
+		########################################################
+		//mode 0 1 dependent processing
+		########################################################
+		
+		#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+		a3=a0 //saving a0 for further use
+		#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
+		b3=a1 //saving a0 for further use
+		
+		
+		
+		// fir filtering part
+		# if (modeFlag)  //mode check logic
+		b2=b2^b2 //puts  0 into b2
+		a2=xmem[_modeFlag]
+		b2-a2
+		if(b==0) jmp>mode0
+		
+		//mode 1 processing
+		#	{	//doing fir filtering on L&R channels
+		
+		//L_CH
+		xmem[i7] = i0; i7 += 1; //saving i0 and i1 registers with pointers to the L_Ch_in and L_Ch_out so they can be used for a function call
+		xmem[i7] = i1; i7 += 1; 
+		//prepping arguments for L_CH
+		//correct value is already in a0
+		i0=(_hpfCoefs)
+		i1=(_hpfHistoryBuffer)
+		// we are calling this function fir_basic( DSPfract input(in a0), __memY DSPfract* coeffs(in i0),  __memX DSPfract* history(in i1))
+		//this call 
+		#  	*L_CH_Out_Ptr = fir_basic(*L_CH_Out_Ptr,hpfCoefs, hpfHistoryBuffer);
+		call _fir_basic
+		i1=xmem[i7]; i7 -= 1;
+		nop
+		ymem[i1]=a0;//saving the result into output buffer for L_CH
+		xmem[i7] = i1; i7 += 1; 
+		#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+		a3=a0;//saving result of this phase for next phase   a2
+		//prepping arguments for R_CH
+		
+		
+		
+		
+		//R_CH
+		a0=a1 //putting the R_Ch value into a0
+		i0=(_lpfCoefs)
+		i1=(_lpfHistoryBuffer)
+		//this call
+		#  	*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
+		call _fir_basic
+		
+		#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
+		b3=a0 ////saving result of this phase for next phase
+		
+		
+		//restoring values from the stack
+		i1=xmem[i7]; i7 -= 1;
+		i0=xmem[i7]; i7 -= 1;
+%mode0:
+		
+		
+		ymem[i1]=a3
+		ymem[i3]=b3
+		
+		
+		// generate C_CH as a sum of L & R output channels
+		#centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
+		#*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
+		//a0 no longer in use so can be used for centerSum variable
+		a0=a3+b3
+		nop
+		nop
+		
+		b0 = xmem[_limiterThreshold]
+	# if (in < limiterThreshold)
+		a0 - b0
+		if (a < 0) jmp>less
+			a0 = b0
+			jmp>endSaturation
+%less: 
+	# if (in >= -limiterThreshold)
+		b0 = -b0
+		a0 - b0
+		if (a >= 0) jmp>endSaturation
+			a0 = b0	
+%endSaturation:
+	
+		
+		nop
+		nop
+		//ymem[i1]=a0
+		//ymem[i3]=a0
+		//ymem[i4]=a0
+		//ymem[i5]=a0
+		ymem[i6]=a0
+		
+		
+		
+
+		//move through a buffer
+		#L_CH_Out_Ptr++;
+		#R_CH_Out_Ptr++;
+		#LS_CH_Out_Ptr++;
+		#RS_CH_Out_Ptr++;
+		#C_CH_Out_Ptr++;
+		i1+=1
+		i3+=1
+		i4+=1
+		i5+=1
+		i6+=1
+		
+
+
+%loop: nop
+
+_end_processing:
+//stack restoring
+
+	#return accums to prev state
+	b2=xmem[i7] ; i7 -= 1;
+	a2=xmem[i7] ; i7 -= 1;
+	# return index regs to prev stat
+	i6=xmem[i7]; i7 -= 1;
+	i5=xmem[i7]; i7 -= 1;
+	i4=xmem[i7]; i7 -= 1;
+	i3=xmem[i7] ; i7 -= 1;
+	i2=xmem[i7] ; i7 -= 1;
+	
+	ret
+############################################################
+############################################################
+//fir filter 	
+############################################################	
+_fir_basic:
+	//DSPint i;
+	//DSPfract ret_val = 0;
+	//input is in a0
+	#save registers to stack
+	xmem[i7] = i3; i7 += 1;
+	#save accums to the stack
+	xmem[i7] = a2; i7 += 1;
+
+	
+	
+	//pointers to second to last and last array members
+	#DSPfract* nexthistoryBufferPtr = history + (FILTER_LENGHT-1);
+	i3 = i1 + ((_FILTER_LENGHT)-1);
+	#DSPfract* historyBufferPtr = history+(FILTER_LENGHT-2);
+	i1 = i1+((_FILTER_LENGHT)-2);
+	
+
+	//shifting all values of the history buffer towards the end by one to make room for a new value	
+	#for (i = FILTER_LENGHT - 2; i >= 0; i--)
+	#{
+	do(_FILTER_LENGHT),>loop
+	
+	#*nexthistoryBufferPtr = *historyBufferPtr; //shift by one
+	a2=xmem[i1]
+	xmem[i3]=a2
+	i1-=1; // moving pointers towards the beggining
+	#nexthistoryBufferPtr--;
+	i3-=1;
+%loop:nop
+
+	#historyBufferPtr++; //ptr was pointing one place before the beggining setting it to point to beggining of the array
+	i1+=1; 
+	/* store input at the beginning of the delay line */
+	#*historyBufferPtr = input; 
+	xmem[i1]=a0
+	
+	//initilising coeff pointer
+	#DSPfract* coeffsPtr = coeffs; 
+	//already in a2
+	
+	/* calc FIR via convolution*/
+	#for (i = 0; i < FILTER_LENGHT; i++)
+	#{
+	#	multiplyResult = ((*coeffsPtr) * (*historyBufferPtr));
+	#	ret_val += multiplyResult; //descrete convolution 
+	#	coeffsPtr++;
+	#	historyBufferPtr++;
+	#}
+	a0=a0^a0//initialising accum to 0
+	do(_FILTER_LENGHT),>loop
+	x0=xmem[i1]
+	y0=ymem[i0]
+	a0+=x0*y0
+	i1+=1
+	i0+=1
+%loop:nop
+	
+	
+	#return ret_val;
+
+_end_fir_basic:
+	#return accums to prev state
+	a2=xmem[i7] ; i7 -= 1;
+	# return index regs to prev stat
+	i3=xmem[i7] ; i7 -= 1;
+	ret
+
+	.endif
+	

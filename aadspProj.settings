@@ -2,22 +2,13 @@
 <settings>
 <clideViews>
 <clideView viewId="clide.debug.ui.memoryView">
-<memoryTab columnCount="8" core="DSP_A" memoryZone="Y" tabAddress="0"/>
+<memoryTab columnCount="4" core="DSP_A" memoryZone="X" tabAddress="67"/>
 </clideView>
 <clideView viewId="clide.debug.ui.registersView">
 <registerView regViewCoreName="DSP_A">
-<regViewMementoCore scrollPercent="0.23684211" selectedItem="/DSP_A/Index registers/i2">
+<regViewMementoCore scrollPercent="NaN">
 <layoutType horizontal="0" register_details="1"/>
 <expandedPath item_0="DSP_A"/>
-<expandedPath item_0="DSP_A" item_1="Data registers"/>
-<expandedPath item_0="DSP_A" item_1="Accum registers"/>
-<expandedPath item_0="DSP_A" item_1="Index registers"/>
-<expandedPath item_0="DSP_A" item_1="Modulo registers"/>
-<expandedPath item_0="DSP_A" item_1="Control registers"/>
-<expandedPath item_0="DSP_A" item_1="Loop registers"/>
-<expandedPath item_0="DSP_A" item_1="Call registers"/>
-<expandedPath item_0="DSP_A" item_1="Rand registers"/>
-<expandedPath item_0="DSP_A" item_1="Page registers"/>
 </regViewMementoCore>
 </registerView>
 </clideView>
@@ -28,6 +19,7 @@
 <editor file_path="/model3a/.suldproj"/>
 <editor file_path="/model3a/src/proc.a"/>
 <editor file_path="/model3a/crystal32.groovy"/>
+<editor file_path="/model3a/src/FIRcoefs.h"/>
 </workbench_editors>
 <views/>
 <watchExpressions>
@@ -38,20 +30,5 @@
 <watchExpression enabled="1" text="outChannels"/>
 </watchExpressions>
 <launcherConfiguration/>
-<launchHistory>
-<launchGroup id="org.eclipse.ui.externaltools.launchGroup">&#x0A;<mruHistory/>
-<favorites/>
-</launchGroup>
-<launchGroup id="org.eclipse.debug.ui.launchGroup.profile">&#x0A;<mruHistory/>
-<favorites/>
-</launchGroup>
-<launchGroup id="org.eclipse.debug.ui.launchGroup.debug">&#x0A;<mruHistory>&#x0A;<launch memento="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#x0D;&#x0A;&lt;launchConfiguration local=&quot;true&quot; path=&quot;APP new Configuration&quot;/&gt;&#x0D;&#x0A;"/>
-</mruHistory>
-<favorites/>
-</launchGroup>
-<launchGroup id="org.eclipse.debug.ui.launchGroup.run">&#x0A;<mruHistory/>
-<favorites/>
-</launchGroup>
-</launchHistory>
 <projectSettings/>
 </settings>

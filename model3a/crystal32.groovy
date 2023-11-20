@@ -83,7 +83,7 @@ import clide.boardconfig.xml.simulator.XmlScpFile;
 	//
 	// argv (optional)
 	//
-	'argv':                         "D:/fax/aadspproj/aadspProj/testStreams/WhiteNoise.wav D:/fax/aadspproj/aadspProj/outputStreams/WhiteNoise_model3_mode1_en1limits.wav 1 -0.999  1",
+	'argv':                         "D:/fax/aadspproj/aadspProj/testStreams/Freq_sweep.wav D:/fax/aadspproj/aadspProj/outputStreams/freqSweep_model3_mode1_en1limits.wav 1 -0.999 1",
 	
 	//
 	// scp files (optional)

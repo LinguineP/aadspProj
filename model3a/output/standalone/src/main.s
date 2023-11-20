@@ -3,6 +3,7 @@
 	.public _hpfHistoryBuffer
 	.public _inChannels
 	.public _inputGain
+	.public _limiterThreshold
 	.public _lpfCoefs
 	.public _lpfHistoryBuffer
 	.public _modeFlag
@@ -754,12 +755,8 @@ cline_307_0:			/* LN: 310 | CYCLE: 0 | RULES: () */
 	i0 = (0) + (_sampleBuffer)			# LN: 310 | 
 	i1 = (0) + (_sampleBuffer)			# LN: 310 | 
 	call (_processing)			# LN: 310 | 
-cline_310_0:			/* LN: 311 | CYCLE: 0 | RULES: () */ 
-	i0 = i7 - (0x207)			# LN: 311 | 
-	uhalfword(a0) = (0x5)			# LN: 311 | 
-	xmem[i0] = a0h			# LN: 311 | 
-	jmp (endif_10)			# LN: 311 | 
-cline_311_0:			/* LN: 316 | CYCLE: 0 | RULES: () */ 
+	jmp (endif_10)			# LN: 310 | 
+cline_310_0:			/* LN: 316 | CYCLE: 0 | RULES: () */ 
 endif_10:			/* LN: 307 | CYCLE: 0 | RULES: () */ 
 else_10:			/* LN: 307 | CYCLE: 0 | RULES: () */ 
 	i0 = i7 - (0x20a)			# LN: 316 | 

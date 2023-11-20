@@ -128,10 +128,10 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 		*R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
 		
 		//passing through processed L & R channels To Ls and Rs channels
-		*LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
-		*RS_CH_Out_Ptr = (DSPfract)processed_R_CH;
+		*LS_CH_Out_Ptr = (DSPfract)saturation(processed_L_CH);
+		*RS_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
 	
-		if (modeFlag) 
+		if (modeFlag)
 		{	//doing fir filtering on L&R channels
 			*L_CH_Out_Ptr = fir_basic(*L_CH_Out_Ptr,hpfCoefs, hpfHistoryBuffer);
 			*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
@@ -147,7 +147,11 @@ void processing(DSPfract pIn[][BLOCK_SIZE], DSPfract pOut[][BLOCK_SIZE])
 		// generate C_CH as a sum of L & R output channels
 		centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
 		*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
-
+		//*R_CH_Out_Ptr = 0.0;
+		//*L_CH_Out_Ptr = 0.0;
+		//*RS_CH_Out_Ptr = 0.0;
+		//*LS_CH_Out_Ptr = 0.0;
+		//*C_CH_Out_Ptr = 0.0;
 
 		L_CH_In_Ptr++;
 		R_CH_In_Ptr++;
