@@ -2,24 +2,24 @@
 <settings>
 <clideViews>
 <clideView viewId="clide.debug.ui.memoryView">
-<memoryTab columnCount="4" core="DSP_A" memoryZone="X" tabAddress="67"/>
+<memoryTab columnCount="8" core="DSP_A" memoryZone="Y" tabAddress="0"/>
 </clideView>
 <clideView viewId="clide.debug.ui.registersView">
 <registerView regViewCoreName="DSP_A">
-<regViewMementoCore scrollPercent="NaN">
+<regViewMementoCore scrollPercent="NaN" selectedItem="/DSP_A/Index registers/i0">
 <layoutType horizontal="0" register_details="1"/>
 <expandedPath item_0="DSP_A"/>
+<expandedPath item_0="DSP_A" item_1="Index registers"/>
 </regViewMementoCore>
 </registerView>
 </clideView>
 </clideViews>
 <perspective id="CLIDE.DebugPerspective"/>
 <workbench_editors>
-<editor file_path="/model3a/src/main.cpp"/>
-<editor file_path="/model3a/.suldproj"/>
-<editor file_path="/model3a/src/proc.a"/>
-<editor file_path="/model3a/crystal32.groovy"/>
-<editor file_path="/model3a/src/FIRcoefs.h"/>
+<editor file_path="/model3aOptimised/src/proc.a"/>
+<editor file_path="/model3aOptimised/.suldproj"/>
+<editor file_path="/model3aOptimised/src/main.c"/>
+<editor file_path="/model3aOptimised/crystal32.groovy"/>
 </workbench_editors>
 <views/>
 <watchExpressions>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings built="true" last_build_time="1700523593182">
+	<dependencies>
+		<source_file last_build_time="1700523591657" path="src/proc.a"/>
+		<source_file last_build_time="1700522337940" path="src/main.c">
+			<dependency>C:/CirrusDSP/include/stdio.h</dependency>
+			<dependency>C:/CirrusDSP/include/dsplib/wavefile.h</dependency>
+			<dependency>C:/CirrusDSP/include/stdfix.h</dependency>
+			<dependency>C:/CirrusDSP/include/scaling_coeff.h</dependency>
+			<dependency>C:/CirrusDSP/include/string.h</dependency>
+			<dependency>C:/CirrusDSP/include/dsplib/timers.h</dependency>
+			<dependency>./common.h</dependency>
+			<dependency>./FIRcoefs.h</dependency>
+		</source_file>
+	</dependencies>
+</settings>
