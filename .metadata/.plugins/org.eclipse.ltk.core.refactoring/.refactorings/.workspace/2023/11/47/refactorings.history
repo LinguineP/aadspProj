@@ -1,4 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Delete resource &apos;model3assembly&apos;" deleteContents="true" description="Delete resource &apos;model3assembly&apos;" element1="/model3assembly" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1700412718934"/>
+<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;model3assembly&apos;" deleteContents="true" description="Delete resource &apos;model3assembly&apos;" element1="/model3assembly" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1700412718934"/>&#x0A;<refactoring comment="Delete resource &apos;example_module/src/FIRcoefs.h&apos;" deleteContents="false" description="Delete resource &apos;example_module/src/FIRcoefs.h&apos;" element1="/example_module/src/FIRcoefs.h" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1700562220160"/>
 </session>

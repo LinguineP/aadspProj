@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="pda.launchType">
-<stringAttribute key="ATTR_SELECTED_DEBUG_INFO_TYPE" value="STANDALONE_DEBUG_INFO_TYPE"/>
-<stringAttribute key="ATTR_SELECTED_TARGET_TYPE" value="TARGET_TYPE_SINGLE_CORE"/>
+<stringAttribute key="ATTR_APPLICATION_PROJECT" value="example_app"/>
+<stringAttribute key="ATTR_CONCURRENCY_NAME" value="cc1"/>
+<stringAttribute key="ATTR_OVERLAY_NAMES" value="application,os,"/>
+<stringAttribute key="ATTR_SELECTED_DEBUG_INFO_TYPE" value="DSP_APP_DEBUG_INFO_TYPE"/>
+<stringAttribute key="ATTR_SELECTED_TARGET_TYPE" value="TARGET_TYPE_SIMULATOR"/>
 <stringAttribute key="ATTR_STANDALONE_PROJECTS" value="D:/fax/aadspproj/aadspProj/model3aOptimised/output/standalone/model3aOptimised.uld,"/>
 <stringAttribute key="org.eclipse.debug.core.source_locator_id" value="pda.sourceLocator"/>
 <stringAttribute key="org.eclipse.debug.core.source_locator_memento_model3a" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;sourceLookupDirector&gt;&#13;&#10;&lt;sourceContainers duplicates=&quot;true&quot;&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;directory nest=&amp;quot;false&amp;quot; path=&amp;quot;C:\CirrusDSP&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.debug.core.containerType.directory&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;default/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.debug.core.containerType.default&quot;/&gt;&#13;&#10;&lt;/sourceContainers&gt;&#13;&#10;&lt;/sourceLookupDirector&gt;&#13;&#10;"/>

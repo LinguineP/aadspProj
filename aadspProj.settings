@@ -2,13 +2,14 @@
 <settings>
 <clideViews>
 <clideView viewId="clide.debug.ui.memoryView">
-<memoryTab columnCount="8" core="DSP_A" memoryZone="Y" tabAddress="0"/>
+<memoryTab columnCount="8" core="DSP_A" memoryZone="Y" tabAddress="3768"/>
 </clideView>
 <clideView viewId="clide.debug.ui.registersView">
 <registerView regViewCoreName="DSP_A">
-<regViewMementoCore scrollPercent="NaN" selectedItem="/DSP_A/Index registers/i0">
+<regViewMementoCore scrollPercent="0.10344828" selectedItem="/DSP_A/Accum registers/a1">
 <layoutType horizontal="0" register_details="1"/>
 <expandedPath item_0="DSP_A"/>
+<expandedPath item_0="DSP_A" item_1="Accum registers"/>
 <expandedPath item_0="DSP_A" item_1="Index registers"/>
 </regViewMementoCore>
 </registerView>
@@ -16,10 +17,8 @@
 </clideViews>
 <perspective id="CLIDE.DebugPerspective"/>
 <workbench_editors>
-<editor file_path="/model3aOptimised/src/proc.a"/>
-<editor file_path="/model3aOptimised/.suldproj"/>
-<editor file_path="/model3aOptimised/src/main.c"/>
-<editor file_path="/model3aOptimised/crystal32.groovy"/>
+<editor file_path="/example_module/src/example_module_main.a"/>
+<editor file_path="/example_module/src/proc.a"/>
 </workbench_editors>
 <views/>
 <watchExpressions>
@@ -28,6 +27,7 @@
 <watchExpression enabled="1" text="modeFlag"/>
 <watchExpression enabled="1" text="sampleBuffer"/>
 <watchExpression enabled="1" text="outChannels"/>
+<watchExpression enabled="1" text="*example_module_MCV"/>
 </watchExpressions>
 <launcherConfiguration/>
 <projectSettings/>

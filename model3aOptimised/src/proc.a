@@ -23,6 +23,10 @@ _FILTER_LENGHT .equ 23
 	
  	.code_ovly 
  	
+ 	
+ 	
+
+ 	
  	# prema CCC2 pozivnoj konvenciji: 
  	# i0 - parametar pokazivac, pIn
  	# i1 - parametar pokazivac, pOut
