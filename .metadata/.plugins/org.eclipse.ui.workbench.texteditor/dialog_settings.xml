@@ -13,8 +13,10 @@
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="outChannels" key="selection"/>
+		<item value="___X_BY_IOBUFFER_PTRS" key="selection"/>
 		<list key="findhistory">
+			<item value="___X_BY_IOBUFFER_PTRS"/>
+			<item value="b0"/>
 			<item value="outChannels"/>
 			<item value="b2"/>
 			<item value="a2"/>

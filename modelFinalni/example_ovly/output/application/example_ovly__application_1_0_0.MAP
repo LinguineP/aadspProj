@@ -3,14 +3,14 @@
 
 Address class CODE	Address:[0000...FFFF], length 10000
 	Address:[0000...0FFF], length 1000, <FREE>
-	Address:[1000...1067], length 0068, <RESERVED for proc_GEN_0000, class CODE_OVLY>
-	Address:[1068...1091], length 002A, <RESERVED for example_module_main_GEN_0003, class CODE_OVLY>
-	Address:[1092...FFFF], length EF6E, <FREE>
+	Address:[1000...1055], length 0056, <RESERVED for proc_GEN_0000, class CODE_OVLY>
+	Address:[1056...107F], length 002A, <RESERVED for example_module_main_GEN_0003, class CODE_OVLY>
+	Address:[1080...FFFF], length EF80, <FREE>
 
 Address class CODE_1	Address:[1000...FFFF], length F000, subclass of CODE
-	Address:[1000...1067], length 0068, <RESERVED for proc_GEN_0000, class CODE_OVLY>
-	Address:[1068...1091], length 002A, <RESERVED for example_module_main_GEN_0003, class CODE_OVLY>
-	Address:[1092...FFFF], length EF6E, <FREE>
+	Address:[1000...1055], length 0056, <RESERVED for proc_GEN_0000, class CODE_OVLY>
+	Address:[1056...107F], length 002A, <RESERVED for example_module_main_GEN_0003, class CODE_OVLY>
+	Address:[1080...FFFF], length EF80, <FREE>
 
 Address class L	Address:[0000...FFFF], length 10000
 	Address:[0000...0FFF], length 1000, <FREE>
@@ -90,7 +90,7 @@ Address class Y_REGULAR	Address:[1000...FFFF], length F000, subclass of Y
                     OVLY_ID_SEGMENT, address 0040 ,length 0004, class  Y_OVLY_ID
 
 -----------------Module:  proc(Segment name)
-                      proc_GEN_0000, address 1000 ,length 0068, class  CODE_OVLY
+                      proc_GEN_0000, address 1000 ,length 0056, class  CODE_OVLY
 
 -----------------Module:  example_module_os_interface(Segment name)
                  example_module_mif, address 1039 ,length 0008, class     Y_OVLY
@@ -102,7 +102,7 @@ Address class Y_REGULAR	Address:[1000...FFFF], length F000, subclass of Y
        example_module_main_GEN_0001, address 1041 ,length 0003, class     Y_OVLY
            example_module_X_Segment, address 1002 ,length 0037, class     X_OVLY
        example_module_main_GEN_0002, address 1039 ,length 0000, class     X_OVLY
-       example_module_main_GEN_0003, address 1068 ,length 002A, class  CODE_OVLY
+       example_module_main_GEN_0003, address 1056 ,length 002A, class  CODE_OVLY
 
 ---------------SYMBOL(global symbols)							FILE						SEGMENT							CLASS		ADDRESS
 
@@ -227,14 +227,14 @@ CL_TD_FRAMEWORK_441_16_SRC_ASM_CODE	C:\CirrusDSP\lib\dsplib\cl_td_framework_441_
                   X_RAM_SRCDataVars	C:\CirrusDSP\lib\dsplib\cl_src_data_vars_asm	             X_RAM_SRCDataVars		           X_OVLY		FFFFFFFF
       X_S_SRC_Get_Samples_Available	C:\CirrusDSP\lib\dsplib\cl_src_441_16_asm	                  SRC_MAIN_SEG		        CODE_OVLY		004C
         X_S_SRC_Get_Space_Available	C:\CirrusDSP\lib\dsplib\cl_src_441_16_asm	                  SRC_MAIN_SEG		        CODE_OVLY		0042
-      X_S_example_module_Background	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1072
-           X_S_example_module_Brick	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1068
-           X_S_example_module_Frame	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1070
-   X_S_example_module_PostKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1081
-      X_S_example_module_PostMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107F
-    X_S_example_module_PreKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1080
-       X_S_example_module_PreMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107E
-           X_S_example_module_Timer	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1071
+      X_S_example_module_Background	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1060
+           X_S_example_module_Brick	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1056
+           X_S_example_module_Frame	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		105E
+   X_S_example_module_PostKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106F
+      X_S_example_module_PostMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106D
+    X_S_example_module_PreKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106E
+       X_S_example_module_PreMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106C
+           X_S_example_module_Timer	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		105F
                 X_TX_NSLIBMASKTABLE	C:\CirrusDSP\lib\dsplib\crystal32\cl_bit_buffer_tables	 cl_bit_buffer_tables_GEN_0000		           X_OVLY		FFFFFFFF
            X_TY_NSLIBLEFTSHIFTTABLE	C:\CirrusDSP\lib\dsplib\crystal32\cl_bit_buffer_tables	 cl_bit_buffer_tables_GEN_0001		           Y_OVLY		001F
           X_TY_NSLIBRIGHTSHIFTTABLE	C:\CirrusDSP\lib\dsplib\crystal32\cl_bit_buffer_tables	 cl_bit_buffer_tables_GEN_0001		           Y_OVLY		FFFFFFFF
@@ -352,9 +352,9 @@ X_VX_SRC_4_11_Coef_Phase_Tbl_End_P_1	C:\CirrusDSP\lib\dsplib\cl_src_tables_asm	 
                    __CLASS_F_Y_OVLY	                      CLINK RESERVED	                -----------			   -----------			1000
                 __CLASS_F_Y_OVLY_ID	                      CLINK RESERVED	                -----------			   -----------			0040
                 __CLASS_F_Y_REGULAR	                      CLINK RESERVED	                -----------			   -----------			1000
-                     __CLASS_L_CODE	                      CLINK RESERVED	                -----------			   -----------			1091
-                   __CLASS_L_CODE_1	                      CLINK RESERVED	                -----------			   -----------			1091
-                __CLASS_L_CODE_OVLY	                      CLINK RESERVED	                -----------			   -----------			1091
+                     __CLASS_L_CODE	                      CLINK RESERVED	                -----------			   -----------			107F
+                   __CLASS_L_CODE_1	                      CLINK RESERVED	                -----------			   -----------			107F
+                __CLASS_L_CODE_OVLY	                      CLINK RESERVED	                -----------			   -----------			107F
                         __CLASS_L_L	                      CLINK RESERVED	                -----------			   -----------			1001
                       __CLASS_L_L_1	                      CLINK RESERVED	                -----------			   -----------			1001
                    __CLASS_L_L_OVLY	                      CLINK RESERVED	                -----------			   -----------			1001
@@ -985,7 +985,7 @@ cl_wavread_number_of_frames_GEN_0000	C:\CirrusDSP\lib\dsplib\crystal32\cl_wavrea
        example_module_main_GEN_0000	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0000		           Y_OVLY		1019
        example_module_main_GEN_0001	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0001		           Y_OVLY		1041
        example_module_main_GEN_0002	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0002		           X_OVLY		1039
-       example_module_main_GEN_0003	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1068
+       example_module_main_GEN_0003	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1056
                  example_module_mif	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_os_interface	            example_module_mif		           Y_OVLY		1039
                       exit_GEN_0000	               C:\CirrusDSP\lib\exit	                 exit_GEN_0000		        CODE_OVLY		FFFFFFFF
                     fclose_GEN_0000	C:\CirrusDSP\lib\dsplib\crystal32\fclose	               fclose_GEN_0000		        CODE_OVLY		FFFFFFFF
@@ -1140,9 +1140,9 @@ ___SegStart_L_EXAMPLE_OVLY_MODULE_TABLE	D:/fax/aadspproj/aadspProj/modelFinalni/
 ___SegStart_ODT_PTR_OVLY_EXAMPLE_OVLY_ODT_PTR	D:/fax/aadspproj/aadspProj/modelFinalni/example_ovly/output/application/gen/src/example_ovly_odt	          EXAMPLE_OVLY_ODT_PTR		     ODT_PTR_OVLY		0059
 ___SegStart_Y_OVLY_ID_OVLY_ID_SEGMENT	D:/fax/aadspproj/aadspProj/modelFinalni/example_ovly/output/application/gen/src/example_ovly_odt	               OVLY_ID_SEGMENT		        Y_OVLY_ID		0040
                           _PROC_ASM	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                        __INIT		             CODE		0000
-                     _end_fir_basic	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                 proc_GEN_0000		        CODE_OVLY		1065
-                    _end_processing	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                 proc_GEN_0000		        CODE_OVLY		104C
-                         _fir_basic	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                 proc_GEN_0000		        CODE_OVLY		1057
+                     _end_fir_basic	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                 proc_GEN_0000		        CODE_OVLY		1053
+                    _end_processing	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                 proc_GEN_0000		        CODE_OVLY		103A
+                         _fir_basic	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                 proc_GEN_0000		        CODE_OVLY		1045
                           _meter_h_	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                        __INIT		             CODE		0000
                         _processing	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                 proc_GEN_0000		        CODE_OVLY		1000
                        _response_h_	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\proc	                        __INIT		             CODE		0000
@@ -1153,22 +1153,22 @@ ___SegStart_Y_OVLY_ID_OVLY_ID_SEGMENT	D:/fax/aadspproj/aadspProj/modelFinalni/ex
                  example_module_mif	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_os_interface	            example_module_mif		           Y_OVLY		1039
                                 mct	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_os_interface	            example_module_MCT		           Y_OVLY		1030
                      X_CX_MINUS_3DB	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	      example_module_X_Segment		           X_OVLY		1009
-      X_S_example_module_Background	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1072
- X_S_example_module_Background_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107D
-           X_S_example_module_Brick	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1068
-      X_S_example_module_Brick_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106F
-           X_S_example_module_Frame	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1070
-      X_S_example_module_Frame_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1070
-   X_S_example_module_PostKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1081
-X_S_example_module_PostKickstart_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1091
-      X_S_example_module_PostMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107F
- X_S_example_module_PostMalloc_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107F
-    X_S_example_module_PreKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1080
-X_S_example_module_PreKickstart_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1080
-       X_S_example_module_PreMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107E
-  X_S_example_module_PreMalloc_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107E
-           X_S_example_module_Timer	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1071
-      X_S_example_module_Timer_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1071
+      X_S_example_module_Background	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1060
+ X_S_example_module_Background_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106B
+           X_S_example_module_Brick	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		1056
+      X_S_example_module_Brick_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		105D
+           X_S_example_module_Frame	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		105E
+      X_S_example_module_Frame_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		105E
+   X_S_example_module_PostKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106F
+X_S_example_module_PostKickstart_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		107F
+      X_S_example_module_PostMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106D
+ X_S_example_module_PostMalloc_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106D
+    X_S_example_module_PreKickstart	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106E
+X_S_example_module_PreKickstart_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106E
+       X_S_example_module_PreMalloc	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106C
+  X_S_example_module_PreMalloc_Done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		106C
+           X_S_example_module_Timer	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		105F
+      X_S_example_module_Timer_done	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	  example_module_main_GEN_0003		        CODE_OVLY		105F
 ___SegStart_X_example_module_X_Segment	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	      example_module_X_Segment		           X_OVLY		1002
 ___SegStart_Y_example_module_Y_Segment	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	      example_module_Y_Segment		           Y_OVLY		1002
                         _enableFlag	D:/fax/aadspproj/aadspProj/modelFinalni/example_module/output/example_module_1_0_0.olib|src\example_module_main	      example_module_X_Segment		           X_OVLY		1005
@@ -1299,9 +1299,9 @@ LOCAL SYMBOL								TYPE		VALUE
                           _PROC_ASM		RELOCATABLE		0000
                              _RS_CH		ABSOLUTE		0003
                               _R_CH		ABSOLUTE		0001
-                     _end_fir_basic		RELOCATABLE		1065
-                    _end_processing		RELOCATABLE		104C
-                         _fir_basic		RELOCATABLE		1057
+                     _end_fir_basic		RELOCATABLE		1053
+                    _end_processing		RELOCATABLE		103A
+                         _fir_basic		RELOCATABLE		1045
                           _meter_h_		RELOCATABLE		0000
                         _processing		RELOCATABLE		1000
                        _response_h_		RELOCATABLE		0000
@@ -1329,22 +1329,22 @@ LOCAL SYMBOL								TYPE		VALUE
 MAX_HARDWARE_DSP_CHANNELS_FOR_ANY_CIRRUS_PLATFORM		ABSOLUTE		0010
      STRUCTURE_INITIALIZATION_STRNG		ABSOLUTE		0000
                      X_CX_MINUS_3DB		RELOCATABLE		1009
-      X_S_example_module_Background		RELOCATABLE		1072
- X_S_example_module_Background_Done		RELOCATABLE		107D
-           X_S_example_module_Brick		RELOCATABLE		1068
-      X_S_example_module_Brick_Done		RELOCATABLE		106F
-           X_S_example_module_Frame		RELOCATABLE		1070
-      X_S_example_module_Frame_done		RELOCATABLE		1070
-   X_S_example_module_PostKickstart		RELOCATABLE		1081
-X_S_example_module_PostKickstart_done		RELOCATABLE		1091
-      X_S_example_module_PostMalloc		RELOCATABLE		107F
- X_S_example_module_PostMalloc_Done		RELOCATABLE		107F
-    X_S_example_module_PreKickstart		RELOCATABLE		1080
-X_S_example_module_PreKickstart_done		RELOCATABLE		1080
-       X_S_example_module_PreMalloc		RELOCATABLE		107E
-  X_S_example_module_PreMalloc_Done		RELOCATABLE		107E
-           X_S_example_module_Timer		RELOCATABLE		1071
-      X_S_example_module_Timer_done		RELOCATABLE		1071
+      X_S_example_module_Background		RELOCATABLE		1060
+ X_S_example_module_Background_Done		RELOCATABLE		106B
+           X_S_example_module_Brick		RELOCATABLE		1056
+      X_S_example_module_Brick_Done		RELOCATABLE		105D
+           X_S_example_module_Frame		RELOCATABLE		105E
+      X_S_example_module_Frame_done		RELOCATABLE		105E
+   X_S_example_module_PostKickstart		RELOCATABLE		106F
+X_S_example_module_PostKickstart_done		RELOCATABLE		107F
+      X_S_example_module_PostMalloc		RELOCATABLE		106D
+ X_S_example_module_PostMalloc_Done		RELOCATABLE		106D
+    X_S_example_module_PreKickstart		RELOCATABLE		106E
+X_S_example_module_PreKickstart_done		RELOCATABLE		106E
+       X_S_example_module_PreMalloc		RELOCATABLE		106C
+  X_S_example_module_PreMalloc_Done		RELOCATABLE		106C
+           X_S_example_module_Timer		RELOCATABLE		105F
+      X_S_example_module_Timer_done		RELOCATABLE		105F
                      _FILTER_LENGHT		ABSOLUTE		0017
 ___SegStart_X_example_module_X_Segment		RELOCATABLE		1002
 ___SegStart_Y_example_module_Y_Segment		RELOCATABLE		1002

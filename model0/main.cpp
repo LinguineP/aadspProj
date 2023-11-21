@@ -48,7 +48,7 @@ static double sampleBuffer[MAX_NUM_CHANNEL][BLOCK_SIZE];
 static double inputGain;
 static double limiterThreshold = 0.999;
 
-void initGainProcessing(double preGainValue)
+void initProcessing(double preGainValue)
 {
 	inputGain = preGainValue;
 }
@@ -92,7 +92,7 @@ double saturation(double in, double threshold)
 	return in;
 }
 
-void gainProcessing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double preGain,
+void processing(double pIn[][BLOCK_SIZE], double pOut[][BLOCK_SIZE], double preGain,
 					double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs,int nSamples)
 {
 	for (int j = 0; j < nSamples; j++)
@@ -225,7 +225,7 @@ int main(int argc, char* argv[])
 			//double* hpfCoeffs, double* lpfCoeffs, double* hpfHistoryBuff, double* lpfHistoryBuff, int n_coeffs, int nSamples)
 			if(enableFlag)
 			{
-				gainProcessing(sampleBuffer, sampleBuffer, preGain, hpfCoefs,lpfCoefs,hpfHistoryBuffer,lpfHistoryBuffer,FILTER_LENGHT,BLOCK_SIZE);
+				processing(sampleBuffer, sampleBuffer, preGain, hpfCoefs,lpfCoefs,hpfHistoryBuffer,lpfHistoryBuffer,FILTER_LENGHT,BLOCK_SIZE);
 			}
 
 			for (int j = 0; j < BLOCK_SIZE; j++)

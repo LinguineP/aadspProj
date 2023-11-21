@@ -94,17 +94,22 @@ _processing:
 		a0 = x0 * y0 //applies gain output of L_Ch of this phase is in a0
 		b0 = xmem[_limiterThreshold]
 	# if (in < limiterThreshold)
-		a0 - b0
-		if (a < 0) jmp>less
-			a0 = b0
-			jmp>endSaturation
-%less: 
-	# if (in >= -limiterThreshold)
-		b0 = -b0
-		a0 - b0
-		if (a >= 0) jmp>endSaturation
-			a0 = b0	
-%endSaturation:
+	#	a0 - b0
+	#	if (a < 0) jmp>less
+	#		a0 = b0
+	#		jmp>endSaturation
+#%less: 
+#	 if (in >= -limiterThreshold)
+#		b0 = -b0
+#		a0 - b0
+#		if (a >= 0) jmp>endSaturation
+#			a0 = b0	
+#%endSaturation:
+	//optimised saturation
+		if(b0<a0) a0=b0
+			b0=-b0
+		if(b0>a0) a0=b0
+
 		//L_CH
 		# *LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
 		ymem[i4]=a0; i4+=1//writes corrected volumes of L_CH To LS_CH
@@ -120,17 +125,20 @@ _processing:
 		a1 = y1 * x0 //applies gain output of R_Ch of this phase is in a1
 		b1 = xmem[_limiterThreshold]
 		# if (in < limiterThreshold)
-		a1 - b1
-		if (a < 0) jmp>less
-			a1 = b1
-			jmp>endSaturation
-%less: 
-	# if (in >= -limiterThreshold)
-		b1 = -b1
-		a1 - b1
-		if (a >= 0) jmp>endSaturation
-			a1 = b1	
-%endSaturation:
+	#	a1 - b1
+	#	if (a < 0) jmp>less
+	#		a1 = b1
+	#		jmp>endSaturation
+#%less: 
+#	# if (in >= -limiterThreshold)
+#		b1 = -b1
+#		a1 - b1
+#		if (a >= 0) jmp>endSaturation
+#			a1 = b1	
+#%endSaturation:
+		if(b1<a1) a1=b1
+			b1=-b1
+		if(b1>a1) a1=b1
 		
 		
 		
@@ -169,20 +177,18 @@ _processing:
 		#	{	//doing fir filtering on L&R channels
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
 		//L_CH
-		xmem[i7] = i0; i7 += 1; //saving i0 and i1 registers with pointers to the L_Ch_in and L_Ch_out so they can be used for a function call
+		xmem[i7] = i4; i7 += 1; //saving i0 and i1 registers with pointers to the L_Ch_in and L_Ch_out so they can be used for a function call
 		xmem[i7] = i1; i7 += 1; 
 		//prepping arguments for L_CH
 		//correct value is already in a0
-		i0=(_hpfCoefs)
+		i4=(_hpfCoefs)
 		i1=(_hpfHistoryBuffer)
 		// we are calling this function fir_basic( DSPfract input(in a0), __memY DSPfract* coeffs(in i0),  __memX DSPfract* history(in i1))
 		//this call 
 		#  	*L_CH_Out_Ptr = fir_basic(*L_CH_Out_Ptr,hpfCoefs, hpfHistoryBuffer);
 		call _fir_basic
-		//i7 -= 1;	
-		i1=xmem[i7]; 
-		xmem[i7] = i1; i7 += 1; 
-		//ymem[i1]=a0;//saving the result into output buffer for L_CH
+		
+		
 		
 		#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
 		a3=a0;//saving result of this phase for next phase   a2
@@ -192,8 +198,9 @@ _processing:
 		
 		
 		//R_CH
-		a0=a1 //putting the R_Ch value into a0
-		i0=(_lpfCoefs)
+		a0=a1
+		 //putting the R_Ch value into a0
+		i4=(_lpfCoefs)
 		i1=(_lpfHistoryBuffer)
 		//this call
 		#  	*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
@@ -204,10 +211,10 @@ _processing:
 		
 		
 		//restoring values from the stack
-		//i7 -= 1;
+		i7 -= 1;
 		
 		i1=xmem[i7]; i7 -= 1;
-		i0=xmem[i7]; 
+		i4=xmem[i7];
 %mode0:
 		
 		
@@ -221,22 +228,25 @@ _processing:
 		#*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
 		//a0 no longer in use so can be used for centerSum variable
 		a0=a3+b3
-		nop
-		nop
 		
 		b0 = xmem[_limiterThreshold]
 	# if (in < limiterThreshold)
-		a0 - b0
-		if (a < 0) jmp>less
-			a0 = b0
-			jmp>endSaturation
-%less: 
-	# if (in >= -limiterThreshold)
-		b0 = -b0
-		a0 - b0
-		if (a >= 0) jmp>endSaturation
-			a0 = b0	
-%endSaturation:
+	#	a0 - b0
+	#	if (a < 0) jmp>less
+	#		a0 = b0
+	#		jmp>endSaturation
+#%less: 
+#	 if (in >= -limiterThreshold)
+#		b0 = -b0
+#		a0 - b0
+#		if (a >= 0) jmp>endSaturation
+#			a0 = b0	
+#%endSaturation:
+	//optimised saturation
+		if(b0<a0) a0=b0
+			b0=-b0
+		if(b0>a0) a0=b0
+
 		//move through a buffer
 		#L_CH_Out_Ptr++;
 		#R_CH_Out_Ptr++;
@@ -315,10 +325,12 @@ _fir_basic:
 	#	historyBufferPtr++;
 	#}
 	a0=a0^a0//initialising accum to 0
-	do(_FILTER_LENGHT),>loop
+	y0=ymem[i4];i4+=1 //preloading the value 
 	x0=xmem[i1];i1+=1
-	y0=ymem[i0];i0+=1
-%loop:a0+=x0*y0
+	do(_FILTER_LENGHT),>loop
+	//x0=xmem[i1];i1+=1
+	
+%loop:a0+=x0*y0;y0=ymem[i4];i4+=1;x0=xmem[i1];i1+=1// 2 instructions in the loop vs 3
 	
 	
 	#return ret_val;
@@ -328,8 +340,9 @@ _end_fir_basic:
 	 #we have to decrement before putting any values because the pointer is currently pointing to 1 adress after value put on stack
 	a2=xmem[i7] ; i7 -= 1;
 	# return index regs to prev stat
-	i3=xmem[i7] ; i7-=1;
+	i3=xmem[i7] ; //i7-=1;
 	ret
+
 
 	.endif
 	

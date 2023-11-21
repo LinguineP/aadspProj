@@ -28,7 +28,7 @@
                         <Value>true</Value>
                         <HoverText></HoverText>
                         <IsEnabled>true</IsEnabled>
-                        <ControlPresentation graphicalElementID="g54920">
+                        <ControlPresentation graphicalElementID="g30470">
                             <Width>132</Width>
                             <Height>69</Height>
                             <CordinateX>16</CordinateX>
@@ -89,7 +89,7 @@
                         <Value>0.0</Value>
                         <HoverText></HoverText>
                         <IsEnabled>true</IsEnabled>
-                        <ControlPresentation graphicalElementID="g54924">
+                        <ControlPresentation graphicalElementID="g30474">
                             <Width>40</Width>
                             <Height>60</Height>
                             <CordinateX>166</CordinateX>
@@ -154,7 +154,7 @@
                         <Value>false</Value>
                         <HoverText></HoverText>
                         <IsEnabled>true</IsEnabled>
-                        <ControlPresentation graphicalElementID="g54928">
+                        <ControlPresentation graphicalElementID="g30478">
                             <Width>40</Width>
                             <Height>20</Height>
                             <CordinateX>166</CordinateX>

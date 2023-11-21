@@ -33,10 +33,31 @@
                         <Control>
                             <ControlName>knob</ControlName>
                             <ControlDataType>FLOATING_POINT</ControlDataType>
-                            <ControlValue>0</ControlValue>
+                            <ControlValue>0.06666666666666671403618238400667906</ControlValue>
                             <ControlRestriction xsi:type="ns2:RestrictionMinMax" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                                 <Min>-1.0</Min>
                                 <Max>1.0</Max>
+                            </ControlRestriction>
+                        </Control>
+                        <Control>
+                            <ControlName>radio_button</ControlName>
+                            <ControlDataType>ENUM</ControlDataType>
+                            <ControlValue>0</ControlValue>
+                            <ControlRestriction xsi:type="ns2:RestrictionEnumerated" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                                <RestrictionEnumerations>
+                                    <RestrictionEnumeration>
+                                        <Name>Radio_0</Name>
+                                        <Value>0</Value>
+                                    </RestrictionEnumeration>
+                                    <RestrictionEnumeration>
+                                        <Name>Radio_1</Name>
+                                        <Value>1</Value>
+                                    </RestrictionEnumeration>
+                                    <RestrictionEnumeration>
+                                        <Name>Radio_2</Name>
+                                        <Value>2</Value>
+                                    </RestrictionEnumeration>
+                                </RestrictionEnumerations>
                             </ControlRestriction>
                         </Control>
                     </ControlList>

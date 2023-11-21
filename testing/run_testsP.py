@@ -32,22 +32,22 @@ def get_inputs():
     #             inputs.append(os.path.join(root, file))
 
     # inputs == ["/path/to/input_streams/Freq_sweep.wav", "/path/to/input_streams/WhiteNoise.wav"]
-    inputs = [os.path.join(input_streams_root, x) for x in ['Freq_sweep.wav', 'WhiteNoise.wav']]
+    inputs = [os.path.join(input_streams_root, x) for x in ['Freq_sweep.wav', 'WhiteNoise.wav','2ch_contour_ne40_24b_48k.wav']]
     
     return inputs
 #
 # @param - argv[1] - Input file name
 #        - argv[2] - Output file name
 #		  - argv[3] - enable on off (0 or 1) default on
-#         - argv[4] - g1 gain for the left channel default -3db (value [0,2])
-#		  - argv[5] - g2 gain () default -3db (value [0,2])
+#         - argv[4] - g1 gain for the left channel default -3db (value [0,1])
+#		  - argv[5] - g2 gain () default -3db (value [0,1])
 #		  - argv[6] - mode (0 or 1) default 0 
 # returns list of lists of desired params
 def get_params():
     
     params = [
         [0, 1],					# enable
-        ["0.999", "-0.999","0.7071"],	# gain 
+        ["0.999","0.7071"],	# gain 
         [0, 1],  				# mode
     ]
 
@@ -64,6 +64,7 @@ test_outputs = os.path.join(os.path.dirname(__file__), "test_outputs")
 def get_cases():
     cases_list1 = []
     cases_list2 = []
+    cases_list3 = []
 
     params = get_params()
     combinations = list(itertools.product(*params))
@@ -74,11 +75,13 @@ def get_cases():
         # Assuming get_inputs() returns a list of inputs
         case1 = (inputs[0], combination)
         case2 = (inputs[1], combination)
+        case3 = (inputs[2], combination)
 
         cases_list1.append(case1)
         cases_list2.append(case2)
+        cases_list3.append(case3)
 
-    return cases_list1, cases_list2
+    return cases_list1, cases_list2,cases_list3
 
 
 
@@ -164,20 +167,23 @@ if __name__ == "__main__":
 
     shutil.rmtree(test_outputs, ignore_errors=True)
 
-    cases1,cases2 = get_cases()
+    cases1,cases2,cases3 = get_cases()
 
     #print(cases)
 
     #run_tests(cases)
     process1 = multiprocessing.Process(target=run_tests, args=(cases1,))
     process2 = multiprocessing.Process(target=run_tests, args=(cases2,))
+    process3 = multiprocessing.Process(target=run_tests, args=(cases3,))
+
 
     process1.start()
     process2.start()
+    process3.start()
 
     process1.join()
     process2.join()
-
+    process3.join()
 
     #extracts all  logs int a new dir
     destination_directory = os.path.join(os.path.dirname(__file__), "extracted_logs")

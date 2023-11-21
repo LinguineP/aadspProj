@@ -19,6 +19,8 @@
 <workbench_editors>
 <editor file_path="/example_module/src/example_module_main.a"/>
 <editor file_path="/example_module/src/proc.a"/>
+<editor file_path="/example_module/src/example_module_os_interface.a"/>
+<editor file_path="/example_module/gen/inc/example_module_mcv.h"/>
 </workbench_editors>
 <views/>
 <watchExpressions>

@@ -15,7 +15,7 @@ executables_root = os.path.join(os.path.dirname(__file__), "bin")
 # returns list of paths to input streams
 def get_inputs():
    
-    inputs = [os.path.join(input_streams_root, x) for x in ['Freq_sweep.wav', 'WhiteNoise.wav']]
+    inputs = [os.path.join(input_streams_root, x) for x in ['Freq_sweep.wav', 'WhiteNoise.wav','2ch_contour_ne40_24b_48k.wav']]
     
     return inputs
 #
@@ -31,7 +31,6 @@ def get_params():
     params = [
         [0, 1],					# enable
         ["0.999", "-0.999","0.7071"],	# gain //last gain is defaultd
-        ["0.999", "-0.999","0.7071"],	# gain 
         ["0", "1"]		#  mode
     ]
 

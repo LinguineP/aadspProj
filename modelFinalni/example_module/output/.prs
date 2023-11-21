@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<settings built="true" last_build_time="1700580993918">
+<settings built="true" last_build_time="1700605885026">
 	<dependencies>
-		<source_file last_build_time="1700580648013" path="src/proc.a">
+		<source_file last_build_time="1700605883574" path="src/proc.a">
 			<dependency>../gen/inc/example_module_mcv.h</dependency>
 			<dependency>C:/CirrusDSP/include/dsplib/meter_asm.h</dependency>
 			<dependency>C:/CirrusDSP/include/dsplib/response_asm.h</dependency>
 		</source_file>
-		<source_file last_build_time="1700580648517" path="src/example_module_os_interface.a">
+		<source_file last_build_time="1700605884091" path="src/example_module_os_interface.a">
 			<dependency>C:/CirrusDSP/crystal32/common/inc/macros.h</dependency>
 			<dependency>../gen/inc/example_module_module.h</dependency>
 		</source_file>
-		<source_file last_build_time="1700580993492" path="src/example_module_main.a">
+		<source_file last_build_time="1700605884598" path="src/example_module_main.a">
 			<dependency>C:/CirrusDSP/include/dsplib/os_asm.h</dependency>
 			<dependency>../gen/inc/example_module_mcv.h</dependency>
 			<dependency>C:/CirrusDSP/include/dsplib/meter_asm.h</dependency>

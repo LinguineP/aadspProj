@@ -1,0 +1,10 @@
+"d:\fax\aadspproj\aadspProj\testing\Tools\PCMCompare.exe"  "d:\fax\aadspproj\aadspProj\testing\test_outputs\2ch_contour_ne40_24b_48k_0_0.7071_1\out_2ch_contour_ne40_24b_48k_0_0.7071_1_0.wav" "d:\fax\aadspproj\aadspProj\testing\test_outputs\2ch_contour_ne40_24b_48k_0_0.7071_1\out_2ch_contour_ne40_24b_48k_0_0.7071_1_1.wav"
+      No differences encountered!
+
+      No differences encountered!
+
+"d:\fax\aadspproj\aadspProj\testing\Tools\PCMCompare.exe"  "d:\fax\aadspproj\aadspProj\testing\test_outputs\2ch_contour_ne40_24b_48k_0_0.7071_1\out_2ch_contour_ne40_24b_48k_0_0.7071_1_1.wav" "d:\fax\aadspproj\aadspProj\testing\test_outputs\2ch_contour_ne40_24b_48k_0_0.7071_1\out_2ch_contour_ne40_24b_48k_0_0.7071_1_2.wav"
+      No differences encountered!
+
+      No differences encountered!
+

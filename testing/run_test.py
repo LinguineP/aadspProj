@@ -31,7 +31,7 @@ def get_inputs():
     #             inputs.append(os.path.join(root, file))
 
     # inputs == ["/path/to/input_streams/Freq_sweep.wav", "/path/to/input_streams/WhiteNoise.wav"]
-    inputs = [os.path.join(input_streams_root, x) for x in ['Freq_sweep.wav', 'WhiteNoise.wav']]
+    inputs = [os.path.join(input_streams_root, x) for x in ['Freq_sweep.wav', 'WhiteNoise.wav','2ch_contour_ne40_24b_48k.wav']]
     
     return inputs
 #

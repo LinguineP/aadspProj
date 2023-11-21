@@ -155,7 +155,7 @@
 80    						//processing loop
 81    						#################################################################
 82    								
-83    	 000E	 8100004B		do(_BLOCK_SIZE),>loop
+83    	 000E	 81000039		do(_BLOCK_SIZE),>loop
 84    								#######################################################
 85    								//first stage, apply inputGain on L & R channels 
 86    								######################################################
@@ -169,245 +169,258 @@
 94    	 0011	 00002400			a0 = x0 * y0 //applies gain output of L_Ch of this phase is in a0
 95    	 0012	 8C040000			b0 = xmem[_limiterThreshold]
 96    							# if (in < limiterThreshold)
-97    	 0013	 00004F20			a0 - b0
-98    	 0014	 84880017			if (a < 0) jmp>less
-99    	 0015	 4C487FFF				a0 = b0
-100   	 0016	 8008001B				jmp>endSaturation
-101   	 0017				%less: 
-102   							# if (in >= -limiterThreshold)
-103   	 0017	 00004C84			b0 = -b0
-104   	 0018	 00004F20			a0 - b0
-105   	 0019	 84C8001B			if (a >= 0) jmp>endSaturation
-106   	 001A	 4C487FFF				a0 = b0	
-107   	 001B				%endSaturation:
-108   								//L_CH
-109   								# *LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
-110   	 001B	 88D40014			ymem[i4]=a0; i4+=1//writes corrected volumes of L_CH To LS_CH
-111   								
-112   								
-113   								//R_CH
-114   								#pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
-115   								# processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(inputGain);
-116   								# *R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
-117   								#R_CH_In_Ptr++;
-118   	 001C	 85940012			y1 = ymem[i2]; i2 += 1  // loads the sample value and moves input pointer through the block
-119   								//inputGain same for both
-120   	 001D	 00002421			a1 = y1 * x0 //applies gain output of R_Ch of this phase is in a1
-121   	 001E	 8D040000			b1 = xmem[_limiterThreshold]
-122   								# if (in < limiterThreshold)
-123   	 001F	 00004F29			a1 - b1
-124   	 0020	 84880023			if (a < 0) jmp>less
-125   	 0021	 4D497FFF				a1 = b1
-126   	 0022	 80080027				jmp>endSaturation
-127   	 0023				%less: 
-128   							# if (in >= -limiterThreshold)
-129   	 0023	 00004C8D			b1 = -b1
-130   	 0024	 00004F29			a1 - b1
-131   	 0025	 84C80027			if (a >= 0) jmp>endSaturation
-132   	 0026	 4D497FFF				a1 = b1	
-133   	 0027				%endSaturation:
-134   								
-135   								
-136   								
-137   								##################################################################
-138   								//passing through processed L & R channels To Ls and Rs channels
-139   								##################################################################
-140   								
-141   							
-142   								//R_CH
-143   								# *RS_CH_Out_Ptr = (DSPfract)processed_R_CH;
-144   	 0027	 89D40015			ymem[i5]=a1;i5+=1//writes corrected volumes of R_CH To RS_CH	
-145   								
-146   							
-147   							
-148   							
-149   								########################################################
-150   								//mode 0 1 dependent processing
-151   								########################################################
-152   								
-153   								#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
-154   	 0028	 484B7FFF			a3=a0 //saving a0 for further use
-155   								#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
-156   	 0029	 494F7FFF			b3=a1 //saving a0 for further use
-157   								
-158   								
-159   								
-160   								// fir filtering part
-161   								# if (modeFlag)  //mode check logic
-162   	 002A	 00004D56			b2=b2^b2 //puts  0 into b2
-163   	 002B	 8A040000			a2=xmem[example_module_MCV.mode1]
-164   								
-165   	 002C	 00004F36			b2-a2
-166   	 002D	 8608003D			if(b==0) jmp>mode0
+97    							#	a0 - b0
+98    							#	if (a < 0) jmp>less
+99    							#		a0 = b0
+100   							#		jmp>endSaturation
+101   						#%less: 
+102   						#	 if (in >= -limiterThreshold)
+103   						#		b0 = -b0
+104   						#		a0 - b0
+105   						#		if (a >= 0) jmp>endSaturation
+106   						#			a0 = b0	
+107   						#%endSaturation:
+108   							//optimised saturation
+109   	 0013	 00004860			if(b0<a0) a0=b0
+110   	 0014	 00004C84				b0=-b0
+111   	 0015	 00004820			if(b0>a0) a0=b0
+112   						
+113   								//L_CH
+114   								# *LS_CH_Out_Ptr = (DSPfract)processed_L_CH;
+115   	 0016	 88D40014			ymem[i4]=a0; i4+=1//writes corrected volumes of L_CH To LS_CH
+116   								
+117   								
+118   								//R_CH
+119   								#pIn[R_CH][j] = saturation(pIn[R_CH][j] * variablesGain[R_CH]);
+120   								# processed_R_CH = (DSPfract)(*R_CH_In_Ptr) * (DSPfract)(inputGain);
+121   								# *R_CH_Out_Ptr = (DSPfract)saturation(processed_R_CH);
+122   								#R_CH_In_Ptr++;
+123   	 0017	 85940012			y1 = ymem[i2]; i2 += 1  // loads the sample value and moves input pointer through the block
+124   								//inputGain same for both
+125   	 0018	 00002421			a1 = y1 * x0 //applies gain output of R_Ch of this phase is in a1
+126   	 0019	 8D040000			b1 = xmem[_limiterThreshold]
+127   								# if (in < limiterThreshold)
+128   							#	a1 - b1
+129   							#	if (a < 0) jmp>less
+130   							#		a1 = b1
+131   							#		jmp>endSaturation
+132   						#%less: 
+133   						#	# if (in >= -limiterThreshold)
+134   						#		b1 = -b1
+135   						#		a1 - b1
+136   						#		if (a >= 0) jmp>endSaturation
+137   						#			a1 = b1	
+138   						#%endSaturation:
+139   	 001A	 00004869			if(b1<a1) a1=b1
+140   	 001B	 00004C8D				b1=-b1
+141   	 001C	 00004829			if(b1>a1) a1=b1
+142   								
+143   								
+144   								
+145   								##################################################################
+146   								//passing through processed L & R channels To Ls and Rs channels
+147   								##################################################################
+148   								
+149   							
+150   								//R_CH
+151   								# *RS_CH_Out_Ptr = (DSPfract)processed_R_CH;
+152   	 001D	 89D40015			ymem[i5]=a1;i5+=1//writes corrected volumes of R_CH To RS_CH	
+153   								
+154   							
+155   							
+156   							
+157   								########################################################
+158   								//mode 0 1 dependent processing
+159   								########################################################
+160   								
+161   								#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+162   	 001E	 484B7FFF			a3=a0 //saving a0 for further use
+163   								#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
+164   	 001F	 494F7FFF			b3=a1 //saving a0 for further use
+165   								
+166   								
 167   								
-168   								//mode 1 processing
-169   								#	{	//doing fir filtering on L&R channels
-170   						///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
-171   								//L_CH
-172   	 002E	 B0540017			xmem[i7] = i0; i7 += 1; //saving i0 and i1 registers with pointers to the L_Ch_in and L_Ch_out so they can be used for a function call
-173   	 002F	 B1540017			xmem[i7] = i1; i7 += 1; 
-174   								//prepping arguments for L_CH
-175   								//correct value is already in a0
-176   	 0030	 B04A0000			i0=(_hpfCoefs)
-177   	 0031	 B14A0000			i1=(_hpfHistoryBuffer)
-178   								// we are calling this function fir_basic( DSPfract input(in a0), __memY DSPfract* coeffs(in i0),  __memX DSPfract* history(in i1))
-179   								//this call 
-180   								#  	*L_CH_Out_Ptr = fir_basic(*L_CH_Out_Ptr,hpfCoefs, hpfHistoryBuffer);
-181   	 0032	 80880057			call _fir_basic
-182   								//i7 -= 1;	
-183   	 0033	 B1140007			i1=xmem[i7]; 
-184   	 0034	 B1540017			xmem[i7] = i1; i7 += 1; 
-185   								//ymem[i1]=a0;//saving the result into output buffer for L_CH
-186   								
-187   								#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
-188   	 0035	 484B7FFF			a3=a0;//saving result of this phase for next phase   a2
-189   								//prepping arguments for R_CH
+168   								// fir filtering part
+169   								# if (modeFlag)  //mode check logic
+170   	 0020	 00004D56			b2=b2^b2 //puts  0 into b2
+171   	 0021	 8A040000			a2=xmem[example_module_MCV.mode1]
+172   								
+173   	 0022	 00004F36			b2-a2
+174   	 0023	 86080032			if(b==0) jmp>mode0
+175   								
+176   								//mode 1 processing
+177   								#	{	//doing fir filtering on L&R channels
+178   						///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+179   								//L_CH
+180   	 0024	 B8540017			xmem[i7] = i4; i7 += 1; //saving i0 and i1 registers with pointers to the L_Ch_in and L_Ch_out so they can be used for a function call
+181   	 0025	 B1540017			xmem[i7] = i1; i7 += 1; 
+182   								//prepping arguments for L_CH
+183   								//correct value is already in a0
+184   	 0026	 B84A0000			i4=(_hpfCoefs)
+185   	 0027	 B14A0000			i1=(_hpfHistoryBuffer)
+186   								// we are calling this function fir_basic( DSPfract input(in a0), __memY DSPfract* coeffs(in i0),  __memX DSPfract* history(in i1))
+187   								//this call 
+188   								#  	*L_CH_Out_Ptr = fir_basic(*L_CH_Out_Ptr,hpfCoefs, hpfHistoryBuffer);
+189   	 0028	 80880045			call _fir_basic
 190   								
-191   						//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+191   								
 192   								
-193   								
-194   								//R_CH
-195   	 0036	 49487FFF			a0=a1 //putting the R_Ch value into a0
-196   	 0037	 B04A0000			i0=(_lpfCoefs)
-197   	 0038	 B14A0000			i1=(_lpfHistoryBuffer)
-198   								//this call
-199   								#  	*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
-200   	 0039	 80880057			call _fir_basic
-201   								
-202   								#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
-203   	 003A	 484F7FFF			b3=a0 ////saving result of this phase for next phase
-204   								
-205   								
-206   								//restoring values from the stack
-207   								//i7 -= 1;
+193   								#processed_L_CH = (DSPfract)*L_CH_Out_Ptr;
+194   	 0029	 484B7FFF			a3=a0;//saving result of this phase for next phase   a2
+195   								//prepping arguments for R_CH
+196   								
+197   						//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+198   								
+199   								
+200   								//R_CH
+201   	 002A	 49487FFF			a0=a1
+202   								 //putting the R_Ch value into a0
+203   	 002B	 B84A0000			i4=(_lpfCoefs)
+204   	 002C	 B14A0000			i1=(_lpfHistoryBuffer)
+205   								//this call
+206   								#  	*R_CH_Out_Ptr = fir_basic(*R_CH_Out_Ptr,lpfCoefs, lpfHistoryBuffer);
+207   	 002D	 80880045			call _fir_basic
 208   								
-209   	 003B	 B1140027			i1=xmem[i7]; i7 -= 1;
-210   	 003C	 B0140007			i0=xmem[i7]; 
-211   	 003D				%mode0:
+209   								#processed_R_CH = (DSPfract)*R_CH_Out_Ptr; 
+210   	 002E	 484F7FFF			b3=a0 ////saving result of this phase for next phase
+211   								
 212   								
-213   								
-214   	 003D	 8BD40011			ymem[i1]=a3;i1+=1
+213   								//restoring values from the stack
+214   	 002F	 02177FFF			i7 -= 1;
 215   								
-216   	 003E	 8FD40013			ymem[i3]=b3;i3+=1
-217   								
-218   								
-219   								// generate C_CH as a sum of L & R output channels
-220   								#centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
-221   								#*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
-222   								//a0 no longer in use so can be used for centerSum variable
-223   	 003F	 000045B8			a0=a3+b3
-224   	 0040	 00007FFF			nop
-225   	 0041	 00007FFF			nop
-226   								
-227   	 0042	 8C040000			b0 = xmem[_limiterThreshold]
-228   							# if (in < limiterThreshold)
-229   	 0043	 00004F20			a0 - b0
-230   	 0044	 84880047			if (a < 0) jmp>less
-231   	 0045	 4C487FFF				a0 = b0
-232   	 0046	 8008004B				jmp>endSaturation
-233   	 0047				%less: 
-234   							# if (in >= -limiterThreshold)
-235   	 0047	 00004C84			b0 = -b0
-236   	 0048	 00004F20			a0 - b0
-237   	 0049	 84C8004B			if (a >= 0) jmp>endSaturation
-238   	 004A	 4C487FFF				a0 = b0	
-239   	 004B				%endSaturation:
-240   								//move through a buffer
-241   								#L_CH_Out_Ptr++;
-242   								#R_CH_Out_Ptr++;
-243   								#LS_CH_Out_Ptr++;
-244   								#RS_CH_Out_Ptr++;
-245   								#C_CH_Out_Ptr++;
-246   						
-247   						
-248   	 004B	 88D40016	%loop: ymem[i6]=a0;i6+=1
+216   	 0030	 B1140027			i1=xmem[i7]; i7 -= 1;
+217   	 0031	 B8140007			i4=xmem[i7];
+218   	 0032				%mode0:
+219   								
+220   								
+221   	 0032	 8BD40011			ymem[i1]=a3;i1+=1
+222   								
+223   	 0033	 8FD40013			ymem[i3]=b3;i3+=1
+224   								
+225   								
+226   								// generate C_CH as a sum of L & R output channels
+227   								#centerSum = (DSPfract)processed_L_CH + (DSPfract)processed_R_CH;
+228   								#*C_CH_Out_Ptr = (DSPfract)saturation(centerSum);
+229   								//a0 no longer in use so can be used for centerSum variable
+230   	 0034	 000045B8			a0=a3+b3
+231   								
+232   	 0035	 8C040000			b0 = xmem[_limiterThreshold]
+233   							# if (in < limiterThreshold)
+234   							#	a0 - b0
+235   							#	if (a < 0) jmp>less
+236   							#		a0 = b0
+237   							#		jmp>endSaturation
+238   						#%less: 
+239   						#	 if (in >= -limiterThreshold)
+240   						#		b0 = -b0
+241   						#		a0 - b0
+242   						#		if (a >= 0) jmp>endSaturation
+243   						#			a0 = b0	
+244   						#%endSaturation:
+245   							//optimised saturation
+246   	 0036	 00004860			if(b0<a0) a0=b0
+247   	 0037	 00004C84				b0=-b0
+248   	 0038	 00004820			if(b0>a0) a0=b0
 249   						
-250   	 004C				_end_processing:
-251   						//stack restoring
-252   	 004C	 02177FFF		i7 -= 1;
-253   							
-254   							#return accums to prev state
-255   	 004D	 8F140027		b3=xmem[i7] ; i7 -= 1;
-256   	 004E	 8B140027		a3=xmem[i7] ; i7 -= 1;
-257   	 004F	 8E140027		b2=xmem[i7] ; i7 -= 1;
-258   	 0050	 8A140027		a2=xmem[i7] ; i7 -= 1;
-259   							# return index regs to prev stat
-260   	 0051	 BA140027		i6=xmem[i7]; i7 -= 1;
-261   	 0052	 B9140027		i5=xmem[i7]; i7 -= 1;
-262   	 0053	 B8140027		i4=xmem[i7]; i7 -= 1;
-263   	 0054	 B3140027		i3=xmem[i7] ; i7 -= 1;
-264   	 0055	 B2140007		i2=xmem[i7] ; 
-265   							
-266   	 0056	 81880000		ret
-267   						############################################################
-268   						############################################################
-269   						//fir filter 	
-270   						############################################################	
-271   	 0057				_fir_basic:
-272   							//DSPint i;
-273   							//DSPfract ret_val = 0;
-274   							//input is in a0
-275   							#save registers to stack
-276   	 0057	 B3540017		xmem[i7] = i3; i7 += 1;
-277   							#save accums to the stack
-278   	 0058	 8A540007		xmem[i7] = a2;
-279   						
-280   							
-281   							
-282   							//pointers to second to last and last array members
-283   							#DSPfract* nexthistoryBufferPtr = history + (FILTER_LENGHT-1);
-284   	 0059	 83150016		i3 = i1 + ((_FILTER_LENGHT)-1);
-285   							#DSPfract* historyBufferPtr = history+(FILTER_LENGHT-2);
-286   	 005A	 81150015		i1 = i1+((_FILTER_LENGHT)-2);
-287   							
-288   						
-289   							//shifting all values of the history buffer towards the end by one to make room for a new value	
-290   							#for (i = FILTER_LENGHT - 2; i >= 0; i--)
-291   							#{
-292   	 005B	 8170005D		do(_FILTER_LENGHT),>loop
-293   							#*nexthistoryBufferPtr = *historyBufferPtr; //shift by one
-294   	 005C	 8A140021		a2=xmem[i1];i1-=1
-295   							 // moving pointers towards the beggining
-296   							#nexthistoryBufferPtr--;
-297   	 005D	 8A540023	%loop:xmem[i3]=a2;i3-=1
+250   								//move through a buffer
+251   								#L_CH_Out_Ptr++;
+252   								#R_CH_Out_Ptr++;
+253   								#LS_CH_Out_Ptr++;
+254   								#RS_CH_Out_Ptr++;
+255   								#C_CH_Out_Ptr++;
+256   						
+257   						
+258   	 0039	 88D40016	%loop: ymem[i6]=a0;i6+=1
+259   						
+260   	 003A				_end_processing:
+261   						//stack restoring
+262   	 003A	 02177FFF		i7 -= 1;
+263   							
+264   							#return accums to prev state
+265   	 003B	 8F140027		b3=xmem[i7] ; i7 -= 1;
+266   	 003C	 8B140027		a3=xmem[i7] ; i7 -= 1;
+267   	 003D	 8E140027		b2=xmem[i7] ; i7 -= 1;
+268   	 003E	 8A140027		a2=xmem[i7] ; i7 -= 1;
+269   							# return index regs to prev stat
+270   	 003F	 BA140027		i6=xmem[i7]; i7 -= 1;
+271   	 0040	 B9140027		i5=xmem[i7]; i7 -= 1;
+272   	 0041	 B8140027		i4=xmem[i7]; i7 -= 1;
+273   	 0042	 B3140027		i3=xmem[i7] ; i7 -= 1;
+274   	 0043	 B2140007		i2=xmem[i7] ; 
+275   							
+276   	 0044	 81880000		ret
+277   						############################################################
+278   						############################################################
+279   						//fir filter 	
+280   						############################################################	
+281   	 0045				_fir_basic:
+282   							//DSPint i;
+283   							//DSPfract ret_val = 0;
+284   							//input is in a0
+285   							#save registers to stack
+286   	 0045	 B3540017		xmem[i7] = i3; i7 += 1;
+287   							#save accums to the stack
+288   	 0046	 8A540007		xmem[i7] = a2;
+289   						
+290   							
+291   							
+292   							//pointers to second to last and last array members
+293   							#DSPfract* nexthistoryBufferPtr = history + (FILTER_LENGHT-1);
+294   	 0047	 83150016		i3 = i1 + ((_FILTER_LENGHT)-1);
+295   							#DSPfract* historyBufferPtr = history+(FILTER_LENGHT-2);
+296   	 0048	 81150015		i1 = i1+((_FILTER_LENGHT)-2);
+297   							
 298   						
-299   							#historyBufferPtr++; //ptr in i1 was pointing 2 places before the beggining setting it to point to beggining of the array
-300   	 005E	 02297FFF		i1+=2; 
-301   							/* store input at the beginning of the delay line */
-302   							#*historyBufferPtr = input; 
-303   	 005F	 88540001		xmem[i1]=a0
-304   							
-305   							//initilising coeff pointer
-306   							#DSPfract* coeffsPtr = coeffs; 
-307   							//already in a2
-308   							
-309   							/* calc FIR via convolution*/
-310   							#for (i = 0; i < FILTER_LENGHT; i++)
-311   							#{
-312   							#	multiplyResult = ((*coeffsPtr) * (*historyBufferPtr));
-313   							#	ret_val += multiplyResult; //descrete convolution 
-314   							#	coeffsPtr++;
-315   							#	historyBufferPtr++;
-316   							#}
-317   	 0060	 00004D40		a0=a0^a0//initialising accum to 0
-318   	 0061	 81700064		do(_FILTER_LENGHT),>loop
-319   	 0062	 80140011		x0=xmem[i1];i1+=1
-320   	 0063	 84940010		y0=ymem[i0];i0+=1
-321   	 0064	 00002408	%loop:a0+=x0*y0
-322   							
-323   							
-324   							#return ret_val;
-325   						
-326   	 0065				_end_fir_basic:
-327   							#return accums to prev state
-328   							 #we have to decrement before putting any values because the pointer is currently pointing to 1 adress after value put on stack
-329   	 0065	 8A140027		a2=xmem[i7] ; i7 -= 1;
-330   							# return index regs to prev stat
-331   	 0066	 B3140027		i3=xmem[i7] ; i7-=1;
-332   	 0067	 81880000		ret
-333   						
-334   							.endif
+299   							//shifting all values of the history buffer towards the end by one to make room for a new value	
+300   							#for (i = FILTER_LENGHT - 2; i >= 0; i--)
+301   							#{
+302   	 0049	 8170004B		do(_FILTER_LENGHT),>loop
+303   							#*nexthistoryBufferPtr = *historyBufferPtr; //shift by one
+304   	 004A	 8A140021		a2=xmem[i1];i1-=1
+305   							 // moving pointers towards the beggining
+306   							#nexthistoryBufferPtr--;
+307   	 004B	 8A540023	%loop:xmem[i3]=a2;i3-=1
+308   						
+309   							#historyBufferPtr++; //ptr in i1 was pointing 2 places before the beggining setting it to point to beggining of the array
+310   	 004C	 02297FFF		i1+=2; 
+311   							/* store input at the beginning of the delay line */
+312   							#*historyBufferPtr = input; 
+313   	 004D	 88540001		xmem[i1]=a0
+314   							
+315   							//initilising coeff pointer
+316   							#DSPfract* coeffsPtr = coeffs; 
+317   							//already in a2
+318   							
+319   							/* calc FIR via convolution*/
+320   							#for (i = 0; i < FILTER_LENGHT; i++)
+321   							#{
+322   							#	multiplyResult = ((*coeffsPtr) * (*historyBufferPtr));
+323   							#	ret_val += multiplyResult; //descrete convolution 
+324   							#	coeffsPtr++;
+325   							#	historyBufferPtr++;
+326   							#}
+327   	 004E	 00004D40		a0=a0^a0//initialising accum to 0
+328   	 004F	 84940014		y0=ymem[i4];i4+=1 //preloading the value 
+329   	 0050	 80140011		x0=xmem[i1];i1+=1
+330   	 0051	 81700052		do(_FILTER_LENGHT),>loop
+331   							//x0=xmem[i1];i1+=1
+332   							
+333   	 0052	 28882408	%loop:a0+=x0*y0;y0=ymem[i4];i4+=1;x0=xmem[i1];i1+=1// 2 instructions in the loop vs 3
+334   							
 335   							
+336   							#return ret_val;
+337   						
+338   	 0053				_end_fir_basic:
+339   							#return accums to prev state
+340   							 #we have to decrement before putting any values because the pointer is currently pointing to 1 adress after value put on stack
+341   	 0053	 8A140027		a2=xmem[i7] ; i7 -= 1;
+342   							# return index regs to prev stat
+343   	 0054	 B3140007		i3=xmem[i7] ; //i7-=1;
+344   	 0055	 81880000		ret
+345   						
+346   						
+347   							.endif
+348   							
 				 SYMBOL TABLE 
 
     Name                                                                                    Type                  Value 
@@ -427,9 +440,9 @@ _ROUTER_INC_PATH_                                                               
 _RS_CH                                                                          					 Number				          3 (3H)
 _R_CH                                                                           					 Number				          1 (1H)
 __CASM_VER__                                                                    			  Unused Variable		        0 (701H)
-_end_fir_basic                                                                  			  Unused Relocatable        proc_GEN_0000:0065H
-_end_processing                                                                 			  Unused Relocatable        proc_GEN_0000:004CH
-_fir_basic                                                                      			         Relocatable         proc_GEN_0000:0057H
+_end_fir_basic                                                                  			  Unused Relocatable        proc_GEN_0000:0053H
+_end_processing                                                                 			  Unused Relocatable        proc_GEN_0000:003AH
+_fir_basic                                                                      			         Relocatable         proc_GEN_0000:0045H
 _hpfCoefs                                                                       					 External   
 _hpfHistoryBuffer                                                               					 External   
 _inputGain                                                                      					 External   
@@ -448,4 +461,4 @@ isDefined                                                                       
 
 Size			  Name										 Class
 0000H	 __INIT                                  			 CODE                                    
-0068H	 proc_GEN_0000                           			 CODE_OVLY                               
+0056H	 proc_GEN_0000                           			 CODE_OVLY                               

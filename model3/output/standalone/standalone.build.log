@@ -30,10 +30,10 @@ D:/fax/aadspproj/aadspProj/model3/output/standalone/src/main.O
      [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_getnchannels.o
      [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_number_of_frames.o
      [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_open.o
-     [exec] 
      [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavread_recvsample.o
      [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavwrite_close.o
-     [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavwrite_open.o
+     [exec] C:\CirrusDSP
+     [exec] \lib\dsplib\crystal32\cl_wavwrite_open.o
      [exec] C:\CirrusDSP\lib\dsplib\crystal32\cl_wavwrite_sendsample.o
      [exec] C:\CirrusDSP\lib\dsplib\crystal32\printf.o
 Creating .uld file...
